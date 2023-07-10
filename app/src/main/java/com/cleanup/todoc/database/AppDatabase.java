@@ -6,13 +6,16 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
+import com.cleanup.todoc.model.Project;
+import com.cleanup.todoc.model.Task;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
  * Code à étudier, pas encore compris.
  */
-@Database(entities = {Task.class}, version = 1, exportSchema = false)
+@Database(entities = {Task.class, Project.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
 
@@ -26,7 +29,7 @@ public abstract class AppDatabase extends RoomDatabase {
             synchronized (AppDatabase.class) {
                 if (appDatabase == null) {
                     appDatabase = Room.databaseBuilder(context.getApplicationContext(),
-                                    AppDatabase.class, "task_database")
+                                    AppDatabase.class, "database")
                             .build();
                 }
             }
