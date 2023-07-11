@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.cleanup.todoc.model.Task;
+import com.cleanup.todoc.model.Project;
 
 import java.util.List;
 
@@ -16,23 +16,23 @@ import java.util.List;
  * Query = language SQL, fonctionnement et utilisations à étudier.
  */
 @Dao
-public class TaskDao {
+public class ProjectDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public void insert(Task task) {
+    public void insert(Project project) {
 
     }
 
     @Update
-    void update(Task Task) {
+    void update(Project project) {
 
     }
 
-    @Query("SELECT * from Task ORDER By id Asc")
-    public LiveData<List<Task>> getTasks() {
+    @Query("SELECT * from Project ORDER By id Asc")
+    public LiveData<List<Project>> getProjects() {
         return null;
     }
 
-    @Query("DELETE from Task")
+    @Query("DELETE from Project")
     void deleteAll() {
 
     }

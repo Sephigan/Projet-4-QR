@@ -16,7 +16,10 @@ import java.util.Comparator;
  *
  * @author Gaëtan HERFRAY
  */
-@Entity(tableName = "Task")
+@Entity(tableName = "Task", foreignKeys = {@ForeignKey(entity = Task.class,
+        parentColumns = "projectId",
+        childColumns = "id",
+        onDelete = ForeignKey.CASCADE)})
 public class Task {
     /**
      * The unique identifier of the task
@@ -121,6 +124,10 @@ public class Task {
      */
     private void setCreationTimestamp(long creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
+    }
+
+    public long getCreationTimestamp(){
+        return creationTimestamp;
     }
 
     /**

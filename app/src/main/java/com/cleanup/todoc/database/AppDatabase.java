@@ -18,13 +18,13 @@ import java.util.concurrent.Executors;
 @Database(entities = {Task.class, Project.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
-
+    public abstract ProjectDao projectDao();
     private static volatile AppDatabase appDatabase;
     private static final int NUMBER_OF_THREADS = 4;
-    static final ExecutorService databaseWriteExecutor =
+    public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    static AppDatabase getDatabase(final Context context) {
+    public static AppDatabase getDatabase(final Context context) {
         if (appDatabase == null) {
             synchronized (AppDatabase.class) {
                 if (appDatabase == null) {
