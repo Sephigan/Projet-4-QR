@@ -8,6 +8,10 @@ import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverter;
+import androidx.room.TypeConverters;
+
+import com.cleanup.todoc.typeconverter.Converters;
 
 import java.util.Comparator;
 
@@ -17,7 +21,7 @@ import java.util.Comparator;
  * @author Gaëtan HERFRAY
  */
 @Entity(tableName = "Task", foreignKeys = {@ForeignKey(entity = Task.class,
-        parentColumns = "projectId",
+        parentColumns = "project",
         childColumns = "id",
         onDelete = ForeignKey.CASCADE)})
 public class Task {
@@ -31,7 +35,8 @@ public class Task {
     /**
      * The unique identifier of the project associated to the task
      */
-    private long projectId;
+    @TypeConverters(Converters.class)
+    Project project;
 
     /**
      * The name of the task
@@ -50,13 +55,13 @@ public class Task {
      * Instantiates a new Task.
      *
      * @param id                the unique identifier of the task to set
-     * @param projectId         the unique identifier of the project associated to the task to set
+     * @param project         the unique identifier of the project associated to the task to set
      * @param name              the name of the task to set
      * @param creationTimestamp the timestamp when the task has been created to set
      */
-    public Task(long id, long projectId, @NonNull String name, long creationTimestamp) {
+    public Task(long id, Project project, @NonNull String name, long creationTimestamp) {
         this.setId(id);
-        this.setProjectId(projectId);
+        this.setProject(project);
         this.setName(name);
         this.setCreationTimestamp(creationTimestamp);
     }
@@ -82,10 +87,10 @@ public class Task {
     /**
      * Sets the unique identifier of the project associated to the task.
      *
-     * @param projectId the unique identifier of the project associated to the task to set
+     * @param project the unique identifier of the project associated to the task to set
      */
-    private void setProjectId(long projectId) {
-        this.projectId = projectId;
+    private void setProject(Project project) {
+        this.project = project;
     }
 
     /**
@@ -95,7 +100,7 @@ public class Task {
      */
     @Nullable
     public Project getProject() {
-        return Project.getProjectById(projectId);
+        return Project.getProjectById(project.getId());
     }
 
     /**
