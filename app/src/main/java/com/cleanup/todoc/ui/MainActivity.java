@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     /**
      * The adapter which handles the list of tasks
      */
-    //private final TasksAdapter adapter = new TasksAdapter(tasks, this);
+    private TasksAdapter adapter = new TasksAdapter(tasks, this);
 
     /**
      * The sort method to be used to display tasks
@@ -107,8 +107,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         dataViewModel.getAllTasksFromVm().observe(this, tasks ->
         {
             if (tasks != null && !tasks.isEmpty()) {
-                TasksAdapter adapter = new TasksAdapter((ArrayList<Task>) tasks, null);
-                listTasks.setAdapter(adapter);
+                TasksAdapter dataAdapter = new TasksAdapter((ArrayList<Task>) tasks, null);
+                adapter=dataAdapter;
+                listTasks.setAdapter(dataAdapter);
             }
         });
         findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
@@ -179,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
 
                 Task task = new Task(
                         id,
-                        taskProject.getId(),
+                        taskProject,
                         taskName,
                         new Date().getTime()
                 );

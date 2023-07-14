@@ -5,9 +5,11 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.TypeConverters;
 import androidx.room.Update;
 
 import com.cleanup.todoc.model.Project;
+import com.cleanup.todoc.typeconverter.Converters;
 
 import java.util.List;
 
@@ -16,24 +18,24 @@ import java.util.List;
  * Query = language SQL, fonctionnement et utilisations à étudier.
  */
 @Dao
-public class ProjectDao {
+public interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public void insert(Project project) {
+    public default void insert(Project project) {
 
     }
 
     @Update
-    void update(Project project) {
+    default void update(Project project) {
 
     }
 
     @Query("SELECT * from Project ORDER By id Asc")
-    public LiveData<List<Project>> getProjects() {
+    public default LiveData<List<Project>> getProjects() {
         return null;
     }
 
     @Query("DELETE from Project")
-    void deleteAll() {
+    default void deleteAll() {
 
     }
 }
