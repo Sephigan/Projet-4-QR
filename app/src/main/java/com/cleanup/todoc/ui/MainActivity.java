@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         lblNoTasks = findViewById(R.id.lbl_no_task);
 
         dataViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(DataViewModel.class);
+        dataViewModel.Init();
         listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         dataViewModel.getAllTasksFromVm().observe(this, tasks ->
         {

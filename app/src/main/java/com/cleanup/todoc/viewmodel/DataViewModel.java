@@ -14,9 +14,9 @@ import java.util.List;
 
 public class DataViewModel extends AndroidViewModel {
     private DataRepository dataRepository;
-    private final MutableLiveData<List<Task>> listLiveDataTask = new MutableLiveData<List<Task>>() {
+    private LiveData<List<Task>> listLiveDataTask = new LiveData<List<Task>>() {
     };
-    private final LiveData<List<Project>> listLiveDataProject;
+    private LiveData<List<Project>> listLiveDataProject;
 
     /**
      * Créer un init qui fait les instantiations.
@@ -25,7 +25,10 @@ public class DataViewModel extends AndroidViewModel {
     public DataViewModel(Application application) {
         super(application);
         dataRepository = new DataRepository(application);
-        listLiveDataTask.setValue(dataRepository.getAllTasks().getValue());
+    }
+
+    public void Init(){
+        listLiveDataTask = dataRepository.getAllTasks();
         listLiveDataProject = dataRepository.getAllProjects();
     }
 

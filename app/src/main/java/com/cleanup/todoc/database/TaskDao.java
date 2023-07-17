@@ -37,9 +37,7 @@ public interface TaskDao {
      * crée une erreur de pointeur vers null
      */
     @Query("SELECT * from Task ORDER By id Asc")
-    public default MutableLiveData<List<Task>> getTasks() {
-        return null;
-    }
+    LiveData<List<Task>> getTasks();
 
     @Query("DELETE from Task")
     default void deleteAll() {
