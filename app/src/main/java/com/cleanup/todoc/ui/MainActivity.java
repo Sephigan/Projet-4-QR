@@ -2,6 +2,7 @@ package com.cleanup.todoc.ui;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,11 +16,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cleanup.todoc.R;
+import com.cleanup.todoc.database.TaskDao;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.viewmodel.DataViewModel;
@@ -27,6 +30,7 @@ import com.cleanup.todoc.viewmodel.DataViewModel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <p>Home activity of the application which is displayed when the user opens the app.</p>
@@ -83,6 +87,13 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     @NonNull
     private RecyclerView listTasks;
 
+    TaskDao taskDao = new TaskDao() {
+        @Override
+        public LiveData<List<Task>> getTasks() {
+            return null;
+        }
+    };
+
     /**
      * The TextView displaying the empty state
      */
@@ -107,11 +118,11 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
         listTasks.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         dataViewModel.getAllTasksFromVm().observe(this, tasks ->
         {
-            if (tasks != null && !tasks.isEmpty()) {
+            //if (tasks != null && !tasks.isEmpty()) {
                 TasksAdapter dataAdapter = new TasksAdapter((ArrayList<Task>) tasks, null);
                 adapter=dataAdapter;
                 listTasks.setAdapter(dataAdapter);
-            }
+            //}
         });
         findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -221,7 +232,12 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * @param task the task to be added to the list
      */
     private void addTask(@NonNull Task task) {
-        tasks.add(task);
+        //tasks.add(task);
+        taskDao.insert(task);
+        if (taskDao.getTasks() == null) {
+            Log.e("get empty", "yes");
+            Log.e("task", task.getName());
+        }
         updateTasks();
     }
 
@@ -229,7 +245,8 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
      * Updates the list of tasks in the UI
      */
     private void updateTasks() {
-        if (tasks.size() == 0) {
+        if (taskDao.getTasks() == null) {
+            Log.e("get empty", "yes");
             lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.GONE);
         } else {
