@@ -7,6 +7,8 @@ import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.cleanup.todoc.repository.DataRepository;
+
 /**
  * <p>Models for project in which tasks are included.</p>
  *
@@ -53,11 +55,10 @@ public class Project {
      */
     @NonNull
     public static Project[] getAllProjects() {
-        return new Project[]{
-                new Project(1L, "Projet Tartampion", 0xFFEADAD1),
-                new Project(2L, "Projet Lucidia", 0xFFB4CDBA),
-                new Project(3L, "Projet Circus", 0xFFA3CED2),
-        };
+        Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
+        Project p2 = new Project(2L, "Projet Lucidia", 0xFFB4CDBA);
+        Project p3 = new Project(3L, "Projet Circus", 0xFFA3CED2);
+        return new Project[]{p1,p2,p3};
     }
 
     /**

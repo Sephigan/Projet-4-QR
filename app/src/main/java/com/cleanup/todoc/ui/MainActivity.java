@@ -25,6 +25,7 @@ import com.cleanup.todoc.R;
 import com.cleanup.todoc.database.TaskDao;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
+import com.cleanup.todoc.repository.DataRepository;
 import com.cleanup.todoc.viewmodel.DataViewModel;
 
 import java.util.ArrayList;
@@ -87,12 +88,7 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     @NonNull
     private RecyclerView listTasks;
 
-    TaskDao taskDao = new TaskDao() {
-        @Override
-        public LiveData<List<Task>> getTasks() {
-            return null;
-        }
-    };
+    private DataRepository dataRepo;
 
     /**
      * The TextView displaying the empty state
@@ -107,9 +103,8 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-
+        dataRepo = new DataRepository(getApplication());
         listTasks = findViewById(R.id.list_tasks);
         lblNoTasks = findViewById(R.id.lbl_no_task);
 
@@ -196,9 +191,9 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
                         taskName,
                         new Date().getTime()
                 );
-
-                addTask(task);
-
+                dataRepo.insertTask(task);
+                Log.e("table", dataRepo.getAllTasks().toString());
+                updateTasks();
                 dialogInterface.dismiss();
             }
             // If name has been set, but project has not been set (this should never occur)
@@ -227,25 +222,10 @@ public class MainActivity extends AppCompatActivity implements TasksAdapter.Dele
     }
 
     /**
-     * Adds the given task to the list of created tasks.
-     *
-     * @param task the task to be added to the list
-     */
-    private void addTask(@NonNull Task task) {
-        //tasks.add(task);
-        taskDao.insert(task);
-        if (taskDao.getTasks() == null) {
-            Log.e("get empty", "yes");
-            Log.e("task", task.getName());
-        }
-        updateTasks();
-    }
-
-    /**
      * Updates the list of tasks in the UI
      */
     private void updateTasks() {
-        if (taskDao.getTasks() == null) {
+        if (dataRepo.getAllTasks() == null) {
             Log.e("get empty", "yes");
             lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.GONE);
