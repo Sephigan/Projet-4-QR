@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.cleanup.todoc.ui.MainActivity;
+import com.cleanup.todoc.ui.ListActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,6 +22,8 @@ import static com.cleanup.todoc.TestUtils.withRecyclerView;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import androidx.test.rule.ActivityTestRule;
+
 /**
  * Instrumented test, which will execute on an Android device.
  *
@@ -29,13 +31,13 @@ import static org.junit.Assert.assertThat;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class MainActivityInstrumentedTest {
+public class ListActivityInstrumentedTest {
     @Rule
-    public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<ListActivity> rule = new ActivityTestRule<>(ListActivity.class);
 
     @Test
     public void addAndRemoveTask() {
-        MainActivity activity = rule.getActivity();
+        ListActivity activity = rule.getActivity();
         TextView lblNoTask = activity.findViewById(R.id.lbl_no_task);
         RecyclerView listTasks = activity.findViewById(R.id.list_tasks);
 
@@ -60,7 +62,7 @@ public class MainActivityInstrumentedTest {
 
     @Test
     public void sortTasks() {
-        MainActivity activity = rule.getActivity();
+        ListActivity activity = rule.getActivity();
 
         onView(withId(R.id.fab_add_task)).perform(click());
         onView(withId(R.id.txt_task_name)).perform(replaceText("aaa Tâche example"));

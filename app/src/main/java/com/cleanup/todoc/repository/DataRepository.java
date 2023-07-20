@@ -43,4 +43,8 @@ public class DataRepository {
     public LiveData<List<Project>> getAllProjects() {
         return listProjects;
     }
+
+    public void deleteTask(Task task){
+
+    }
 }
