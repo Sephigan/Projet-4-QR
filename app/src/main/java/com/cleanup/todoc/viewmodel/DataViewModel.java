@@ -18,16 +18,12 @@ public class DataViewModel extends AndroidViewModel {
     };
     private LiveData<List<Project>> listLiveDataProject;
 
-    /**
-     * Créer un init qui fait les instantiations.
-     * @param application
-     */
     public DataViewModel(Application application) {
         super(application);
         dataRepository = new DataRepository(application);
     }
 
-    public void Init(){
+    public void init(){
         listLiveDataTask = dataRepository.getAllTasks();
         listLiveDataProject = dataRepository.getAllProjects();
     }

@@ -31,11 +31,6 @@ public interface TaskDao {
 
     }
 
-    /**
-     * Aucune valeurs à récupérer
-     * @return null par défaut
-     * crée une erreur de pointeur vers null
-     */
     @Query("SELECT * from Task ORDER By id Asc")
     LiveData<List<Task>> getTasks();
 

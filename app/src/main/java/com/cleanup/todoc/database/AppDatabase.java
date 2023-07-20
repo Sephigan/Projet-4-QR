@@ -29,14 +29,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    /*public static final Migration addProjects = new Migration(1, 2) {
-        @Override
-        public void migrate(SupportSQLiteDatabase database) {
-            database.execSQL("CREATE TABLE `Project` (`id` LONG, "
-                    + "`name` VARCHAR, " + " `color` LONG, PRIMARY KEY(`id`))");
-        }
-    };*/
-
     public static AppDatabase getDatabase(final Context context) {
         if (appDatabase == null) {
             synchronized (AppDatabase.class) {

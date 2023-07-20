@@ -42,7 +42,6 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     @NonNull
     private SortMethod sortMethod = SortMethod.NONE;
     private RecyclerView mRecyclerView;
-    private TasksAdapter adapter = new TasksAdapter(tasks, this);
     @NonNull
     private List<Task> tasks;
     @Nullable
@@ -58,6 +57,15 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     DataRepository dataRepo;
     private DataViewModel dataViewModel;
 
+    /**
+     * Tout passe par un observer
+     * Il faut utiliser le fonctionnement Fragment -> ViewModel -> Repository -> DAO
+     * LiveData<List> traite des List<>
+     * Ne pas s'embrouiller et ça va passer
+     * Ajouter les Projects en brut dans la table à l'initialisation seulement une fois.
+     * @param savedInstanceState If the fragment is being re-created from
+     * a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -65,15 +73,13 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         dataRepo = new DataRepository(getActivity().getApplication());
         listTasks = getActivity().findViewById(R.id.list_tasks);
         lblNoTasks = getActivity().findViewById(R.id.lbl_no_task);
-
         dataViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(DataViewModel.class);
-        dataViewModel.Init();
+        dataViewModel.init();
         listTasks.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         dataViewModel.getAllTasksFromVm().observe(this, tasks ->
         {
             //if (tasks != null && !tasks.isEmpty()) {
             TasksAdapter dataAdapter = new TasksAdapter(tasks, null);
-            adapter=dataAdapter;
             listTasks.setAdapter(dataAdapter);
             //}
         });
@@ -98,14 +104,6 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         return view;
-    }
-
-    /**
-     * Récupérer la LiveData List dans la list ?
-     */
-    private void Initlist(){
-        tasks = dataRepo.getAllTasks();
-        mRecyclerView.setAdapter(new TasksAdapter(tasks, this));
     }
 
     /**
@@ -156,7 +154,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
                 dialogInterface.dismiss();
             }
         }
-        // If dialog is aloready closed
+        // If dialog is already closed
         else {
             dialogInterface.dismiss();
         }
@@ -217,6 +215,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
             dialogSpinner.setAdapter(adapter);
         }
     }
+
 
     private void updateTasks() {
         if (dataRepo.getAllTasks() == null) {
