@@ -41,4 +41,24 @@ public class DataViewModel extends AndroidViewModel {
     public void insertProject(Project project) {
         dataRepository.insertProject(project);
     }
+
+    public void deleteTask(Task task){
+        dataRepository.deleteTask(task);
+    }
+
+    public void orderAlphaAZ(){
+        dataRepository.orderAlphaAZ();
+    }
+
+    public void orderAlphaZA(){
+        dataRepository.orderAlphaZA();
+    }
+
+    public void orderCreationAsc(){
+        dataRepository.orderCreationAsc();
+    }
+
+    public void orderCreationDesc(){
+        dataRepository.orderCreationDesc();
+    }
 }

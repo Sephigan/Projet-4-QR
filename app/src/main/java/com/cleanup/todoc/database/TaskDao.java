@@ -38,4 +38,16 @@ public interface TaskDao {
     default void deleteAll() {
 
     }
+
+    @Query("SELECT * FROM Task ORDER BY name ASC")
+    LiveData<List<Task>> orderAlphaAZ();
+
+    @Query("SELECT * FROM Task ORDER BY name DESC")
+    LiveData<List<Task>> orderAlphaZA();
+
+    @Query("SELECT * FROM Task ORDER BY creationTimestamp ASC")
+    LiveData<List<Task>> orderCreationAsc();
+
+    @Query("SELECT * FROM Task ORDER BY creationTimestamp DESC")
+    LiveData<List<Task>> orderCreationDesc();
 }

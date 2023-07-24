@@ -47,4 +47,24 @@ public class DataRepository {
     public void deleteTask(Task task){
 
     }
+
+    public void orderAlphaAZ()
+    {
+        taskDao.orderAlphaAZ();
+    }
+
+    public void orderAlphaZA()
+    {
+        taskDao.orderAlphaZA();
+    }
+    public void orderCreationAsc()
+    {
+        taskDao.orderCreationAsc();
+    }
+
+    public void orderCreationDesc()
+    {
+        taskDao.orderCreationDesc();
+    }
+
 }

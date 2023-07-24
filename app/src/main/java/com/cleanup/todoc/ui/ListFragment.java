@@ -42,8 +42,6 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     @NonNull
     private SortMethod sortMethod = SortMethod.NONE;
     private RecyclerView mRecyclerView;
-    @NonNull
-    private List<Task> tasks;
     @Nullable
     public AlertDialog dialog = null;
     @Nullable
@@ -54,8 +52,8 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     private TextView lblNoTasks;
     @NonNull
     private RecyclerView listTasks;
-    DataRepository dataRepo;
     private DataViewModel dataViewModel;
+    private Project[] lProjects;
 
     /**
      * Tout passe par un observer
@@ -70,12 +68,17 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        dataRepo = new DataRepository(getActivity().getApplication());
-        listTasks = getActivity().findViewById(R.id.list_tasks);
+        listTasks = getActivity().findViewById(R.id.container);
         lblNoTasks = getActivity().findViewById(R.id.lbl_no_task);
+        lProjects = Project.getAllProjects();
         dataViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(DataViewModel.class);
         dataViewModel.init();
         listTasks.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        if(dataViewModel.getAllProjectsFromVm() == null){
+            for(int i=0; i<3; i++){
+                dataViewModel.insertProject(lProjects[i]);
+            }
+        }
         dataViewModel.getAllTasksFromVm().observe(this, tasks ->
         {
             //if (tasks != null && !tasks.isEmpty()) {
@@ -100,7 +103,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.item_task, container, false);
         Context context = view.getContext();
-        mRecyclerView = (RecyclerView) view;
+        mRecyclerView = new RecyclerView(view.getContext());
         mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         return view;
@@ -112,7 +115,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
      */
     @Override
     public void onDeleteTask(Task task) {
-        dataRepo.deleteTask(task);
+        dataViewModel.deleteTask(task);
         updateTasks();
     }
 
@@ -144,8 +147,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
                         taskName,
                         new Date().getTime()
                 );
-                dataRepo.insertTask(task);
-                Log.e("table", dataRepo.getAllTasks().toString());
+                dataViewModel.insertTask(task);
                 updateTasks();
                 dialogInterface.dismiss();
             }
@@ -209,16 +211,20 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         return dialog;
     }
     private void populateDialogSpinner() {
-        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, allProjects);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        if (dialogSpinner != null) {
-            dialogSpinner.setAdapter(adapter);
-        }
+        dataViewModel.getAllProjectsFromVm().observe(this, projects ->
+        {
+            final ArrayAdapter<Project> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, projects);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            if (dialogSpinner != null) {
+                dialogSpinner.setAdapter(adapter);
+            }
+        });
+
     }
 
 
     private void updateTasks() {
-        if (dataRepo.getAllTasks() == null) {
+        if (dataViewModel.getAllTasksFromVm() == null) {
             Log.e("get empty", "yes");
             lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.GONE);
@@ -227,30 +233,26 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
             listTasks.setVisibility(View.VISIBLE);
             switch (sortMethod) {
                 case ALPHABETICAL:
-                    Collections.sort(tasks, new Task.TaskAZComparator());
+                    dataViewModel.orderAlphaAZ();
                     break;
                 case ALPHABETICAL_INVERTED:
-                    Collections.sort(tasks, new Task.TaskZAComparator());
+                    dataViewModel.orderAlphaZA();
                     break;
                 case RECENT_FIRST:
-                    Collections.sort(tasks, new Task.TaskRecentComparator());
+                    dataViewModel.orderCreationAsc();
                     break;
                 case OLD_FIRST:
-                    Collections.sort(tasks, new Task.TaskOldComparator());
+                    dataViewModel.orderCreationDesc();
                     break;
 
             }
-            adapter.updateTasks(tasks);
         }
     }
 
 
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Initlist();
-    }
+    public void onResume() { super.onResume(); }
 
     @Override
     public void onStart() {
@@ -281,9 +283,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         } else if (id == R.id.filter_recent_first) {
             sortMethod = SortMethod.RECENT_FIRST;
         }
-
-        Initlist();
-
+        updateTasks();
         return super.onOptionsItemSelected(item);
     }
 
