@@ -22,7 +22,7 @@ import java.util.List;
 @Dao
 public interface TaskDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public default void insert(Task task) {
+    public default void insertTask(Task task) {
 
     }
 

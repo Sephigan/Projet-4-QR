@@ -29,7 +29,7 @@ public class DataRepository {
     }
 
     public void insertTask(Task task) {
-        AppDatabase.databaseWriteExecutor.execute(() -> taskDao.insert(task));
+        AppDatabase.databaseWriteExecutor.execute(() -> taskDao.insertTask(task));
     }
 
     public LiveData<List<Task>> getAllTasks() {
@@ -37,7 +37,7 @@ public class DataRepository {
     }
 
     public void insertProject(Project project) {
-        AppDatabase.databaseWriteExecutor.execute(() -> projectDao.insert(project));
+        AppDatabase.databaseWriteExecutor.execute(() -> projectDao.insertProject(project));
     }
 
     public LiveData<List<Project>> getAllProjects() {

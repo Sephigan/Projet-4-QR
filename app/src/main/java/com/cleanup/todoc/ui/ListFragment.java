@@ -57,9 +57,8 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
 
     /**
      * Tout passe par un observer
-     * Il faut utiliser le fonctionnement Fragment -> ViewModel -> Repository -> DAO
+     * On doit réussir les insert
      * LiveData<List> traite des List<>
-     * Ne pas s'embrouiller et ça va passer
      * Ajouter les Projects en brut dans la table à l'initialisation seulement une fois.
      * @param savedInstanceState If the fragment is being re-created from
      * a previous saved state, this is the state.
@@ -81,10 +80,10 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         }
         dataViewModel.getAllTasksFromVm().observe(this, tasks ->
         {
-            //if (tasks != null && !tasks.isEmpty()) {
+            if (tasks != null && !tasks.isEmpty()) {
             TasksAdapter dataAdapter = new TasksAdapter(tasks, null);
             listTasks.setAdapter(dataAdapter);
-            //}
+            }
         });
         getActivity().findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,6 +210,9 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         return dialog;
     }
     private void populateDialogSpinner() {
+        if(dataViewModel.getAllProjectsFromVm()==null){
+            Log.e("wtf", "c est vide");
+        }
         dataViewModel.getAllProjectsFromVm().observe(this, projects ->
         {
             final ArrayAdapter<Project> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, projects);

@@ -20,7 +20,7 @@ import java.util.List;
 @Dao
 public interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public default void insert(Project project) {
+    public default void insertProject(Project project) {
 
     }
 
