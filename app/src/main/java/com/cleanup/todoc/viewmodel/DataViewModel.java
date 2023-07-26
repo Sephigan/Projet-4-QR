@@ -1,6 +1,7 @@
 package com.cleanup.todoc.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -38,9 +39,7 @@ public class DataViewModel extends AndroidViewModel {
         dataRepository.insertTask(task);
     }
 
-    public void insertProject(Project project) {
-        dataRepository.insertProject(project);
-    }
+    public void insertProject(Project project) { dataRepository.insertProject(project); }
 
     public void deleteTask(Task task){
         dataRepository.deleteTask(task);

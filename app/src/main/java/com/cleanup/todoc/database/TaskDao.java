@@ -15,9 +15,6 @@ import com.cleanup.todoc.typeconverter.Converters;
 import java.util.List;
 
 
-/**
- * Query = language SQL, fonctionnement et utilisations à étudier.
- */
 @TypeConverters(Converters.class)
 @Dao
 public interface TaskDao {

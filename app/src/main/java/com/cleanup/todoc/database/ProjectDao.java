@@ -1,5 +1,7 @@
 package com.cleanup.todoc.database;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -14,14 +16,10 @@ import com.cleanup.todoc.typeconverter.Converters;
 import java.util.List;
 
 
-/**
- * Query = language SQL, fonctionnement et utilisations à étudier.
- */
 @Dao
 public interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     public default void insertProject(Project project) {
-
     }
 
     @Update

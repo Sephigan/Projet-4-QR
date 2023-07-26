@@ -5,6 +5,7 @@ import android.Manifest;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
@@ -35,6 +36,7 @@ public class Task {
     /**
      * The unique identifier of the project associated to the task
      */
+    @ColumnInfo(name = "project")
     @TypeConverters({Converters.class})
     Project project;
 
@@ -43,12 +45,14 @@ public class Task {
      */
     // Suppress warning because setName is called in constructor
     @SuppressWarnings("NullableProblems")
+    @ColumnInfo(name = "name")
     @NonNull
     private String name;
 
     /**
      * The timestamp when the task has been created
      */
+    @ColumnInfo(name = "creationTimestamp")
     private long creationTimestamp;
 
     /**

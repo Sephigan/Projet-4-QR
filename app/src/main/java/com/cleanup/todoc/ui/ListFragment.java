@@ -1,5 +1,7 @@
 package com.cleanup.todoc.ui;
 
+import static java.lang.String.valueOf;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -59,7 +61,6 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
      * Tout passe par un observer
      * On doit réussir les insert
      * LiveData<List> traite des List<>
-     * Ajouter les Projects en brut dans la table à l'initialisation seulement une fois.
      * @param savedInstanceState If the fragment is being re-created from
      * a previous saved state, this is the state.
      */
@@ -74,7 +75,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         dataViewModel.init();
         listTasks.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         if(dataViewModel.getAllProjectsFromVm() == null){
-            for(int i=0; i<3; i++){
+            for(int i=0; i<3; i++) {
                 dataViewModel.insertProject(lProjects[i]);
             }
         }
@@ -187,18 +188,12 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
                 dialog = null;
             }
         });
-
         dialog = alertBuilder.create();
-
-        // This instead of listener to positive button in order to avoid automatic dismiss
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-
             @Override
             public void onShow(DialogInterface dialogInterface) {
-
                 Button button = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 button.setOnClickListener(new View.OnClickListener() {
-
                     @Override
                     public void onClick(View view) {
                         onPositiveButtonClick(dialog);
@@ -206,28 +201,19 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
                 });
             }
         });
-
         return dialog;
     }
     private void populateDialogSpinner() {
-        if(dataViewModel.getAllProjectsFromVm()==null){
-            Log.e("wtf", "c est vide");
+        final ArrayAdapter<Project> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, dataViewModel.getAllProjectsFromVm().getValue());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        if (dialogSpinner != null) {
+            dialogSpinner.setAdapter(adapter);
         }
-        dataViewModel.getAllProjectsFromVm().observe(this, projects ->
-        {
-            final ArrayAdapter<Project> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, projects);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            if (dialogSpinner != null) {
-                dialogSpinner.setAdapter(adapter);
-            }
-        });
-
     }
 
 
     private void updateTasks() {
         if (dataViewModel.getAllTasksFromVm() == null) {
-            Log.e("get empty", "yes");
             lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.GONE);
         } else {
