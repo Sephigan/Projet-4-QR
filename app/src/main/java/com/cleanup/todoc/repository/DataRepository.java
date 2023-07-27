@@ -38,7 +38,7 @@ public class DataRepository {
     }
 
     public void insertProject(Project project) {
-        AppDatabase.databaseWriteExecutor.execute(() -> projectDao.insertProject(project));
+        projectDao.insertProject(project);
     }
 
     public LiveData<List<Project>> getAllProjects() {
@@ -58,6 +58,7 @@ public class DataRepository {
     {
         taskDao.orderAlphaZA();
     }
+
     public void orderCreationAsc()
     {
         taskDao.orderCreationAsc();

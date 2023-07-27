@@ -18,9 +18,8 @@ import java.util.List;
 
 @Dao
 public interface ProjectDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public default void insertProject(Project project) {
-    }
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertProject(Project project);
 
     @Update
     default void update(Project project) {
@@ -28,9 +27,7 @@ public interface ProjectDao {
     }
 
     @Query("SELECT * from Project ORDER By id Asc")
-    public default LiveData<List<Project>> getProjects() {
-        return null;
-    }
+    public LiveData<List<Project>> getProjects();
 
     @Query("DELETE from Project")
     default void deleteAll() {
