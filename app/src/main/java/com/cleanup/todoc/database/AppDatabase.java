@@ -1,6 +1,7 @@
 package com.cleanup.todoc.database;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import androidx.room.Database;
 import androidx.room.Room;
