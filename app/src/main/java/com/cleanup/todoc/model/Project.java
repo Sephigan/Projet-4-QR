@@ -27,14 +27,12 @@ public class Project {
     /**
      * The name of the project
      */
-    @ColumnInfo(name = "name")
     @NonNull
     private final String name;
 
     /**
      * The hex (ARGB) code of the color associated to the project
      */
-    @ColumnInfo(name = "color")
     @ColorInt
     private final int color;
 

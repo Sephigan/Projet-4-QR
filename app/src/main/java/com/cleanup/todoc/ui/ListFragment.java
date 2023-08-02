@@ -74,11 +74,6 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         dataViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(DataViewModel.class);
         dataViewModel.init();
         listTasks.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        //if(dataViewModel.getAllProjectsFromVm().getValue() == null) {
-            //for (int i = 0; i < lProjects.length; i++) {
-        dataViewModel.insertProject(lProjects[0]); //instantialiser dans l'appdatabase
-            //}
-        //}
         dataViewModel.getAllProjectsFromVm().observe(this, projects ->
         {
             final ArrayAdapter<Project> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, projects);
