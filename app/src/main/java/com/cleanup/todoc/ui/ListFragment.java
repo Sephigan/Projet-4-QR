@@ -56,6 +56,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     private RecyclerView listTasks;
     private DataViewModel dataViewModel;
     private TasksAdapter dataAdapter;
+    private List<Task> tmpList;
 
     /**
      * Tout passe par un observer
@@ -68,18 +69,9 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        listTasks = getActivity().findViewById(R.id.container);
         lblNoTasks = getActivity().findViewById(R.id.lbl_no_task);
         dataViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(DataViewModel.class);
         dataViewModel.init();
-        listTasks.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        dataViewModel.getAllTasksFromVm().observe(this, tasks ->
-        {
-            if (tasks != null && !tasks.isEmpty()) {
-                dataAdapter = new TasksAdapter(tasks, this);
-            }
-        });
-        listTasks.setAdapter(dataAdapter);
         getActivity().findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,6 +89,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.item_task, container, false);
         Context context = view.getContext();
+        listTasks = new RecyclerView (context);
         listTasks.setLayoutManager(new LinearLayoutManager(context));
         listTasks.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         return view;
@@ -110,6 +103,17 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     public void onDeleteTask(Task task) {
         dataViewModel.deleteTask(task);
         updateTasks();
+    }
+
+    private void initList(){
+        dataViewModel.getAllTasksFromVm().observe(this, tasks ->
+        {
+            if (tasks != null && !tasks.isEmpty()) {
+                dataAdapter = new TasksAdapter(tasks, this);
+                tmpList = tasks;
+            }
+        });
+        listTasks.setAdapter(new TasksAdapter(tmpList, this));
     }
 
     private void onPositiveButtonClick(DialogInterface dialogInterface) {
@@ -235,6 +239,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     @Override
     public void onResume() {
         super.onResume();
+        initList();
     }
 
     @Override
