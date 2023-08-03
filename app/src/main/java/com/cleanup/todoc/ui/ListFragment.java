@@ -34,6 +34,7 @@ import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.repository.DataRepository;
 import com.cleanup.todoc.viewmodel.DataViewModel;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -43,7 +44,6 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
 
     @NonNull
     private SortMethod sortMethod = SortMethod.NONE;
-    private RecyclerView mRecyclerView;
     @Nullable
     public AlertDialog dialog = null;
     @Nullable
@@ -55,7 +55,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     @NonNull
     private RecyclerView listTasks;
     private DataViewModel dataViewModel;
-    private Project[] lProjects;
+    private TasksAdapter dataAdapter;
 
     /**
      * Tout passe par un observer
@@ -70,25 +70,16 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         setHasOptionsMenu(true);
         listTasks = getActivity().findViewById(R.id.container);
         lblNoTasks = getActivity().findViewById(R.id.lbl_no_task);
-        lProjects = Project.getAllProjects();
         dataViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(DataViewModel.class);
         dataViewModel.init();
         listTasks.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        dataViewModel.getAllProjectsFromVm().observe(this, projects ->
-        {
-            final ArrayAdapter<Project> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, projects);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            if (dialogSpinner != null) {
-                dialogSpinner.setAdapter(adapter);
-            }
-        });
         dataViewModel.getAllTasksFromVm().observe(this, tasks ->
         {
             if (tasks != null && !tasks.isEmpty()) {
-                TasksAdapter dataAdapter = new TasksAdapter(tasks, this);
-                listTasks.setAdapter(dataAdapter);
+                dataAdapter = new TasksAdapter(tasks, this);
             }
         });
+        listTasks.setAdapter(dataAdapter);
         getActivity().findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,9 +97,8 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(R.layout.item_task, container, false);
         Context context = view.getContext();
-        mRecyclerView = new RecyclerView(view.getContext());
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        listTasks.setLayoutManager(new LinearLayoutManager(context));
+        listTasks.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         return view;
     }
 
@@ -167,11 +157,21 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
 
     private void showAddTaskDialog() {
         final AlertDialog dialog = getAddTaskDialog();
-
         dialog.show();
-
-        dialogEditText = dialog.findViewById(R.id.txt_task_name);
         dialogSpinner = dialog.findViewById(R.id.project_spinner);
+        dialogEditText = dialog.findViewById(R.id.txt_task_name);
+        populateDialogSpinner();
+    }
+
+    private void populateDialogSpinner(){
+        dataViewModel.getAllProjectsFromVm().observe(this, projects ->
+        {
+            final ArrayAdapter<Project> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, projects);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            if (dialogSpinner != null) {
+                dialogSpinner.setAdapter(adapter);
+            }
+        });
     }
 
     @NonNull
@@ -233,7 +233,9 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
 
 
     @Override
-    public void onResume() { super.onResume(); }
+    public void onResume() {
+        super.onResume();
+    }
 
     @Override
     public void onStart() {
