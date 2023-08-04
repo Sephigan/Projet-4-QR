@@ -14,7 +14,7 @@ import com.cleanup.todoc.R;
  *
  * @author Gaëtan HERFRAY
  */
-public class ListActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

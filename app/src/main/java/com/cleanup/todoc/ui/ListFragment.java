@@ -59,14 +59,15 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     private List<Task> tmpList;
 
     /**
-     * Tout passe par un observer
-     * On doit réussir les insert
-     * LiveData<List> traite des List<>
+     * Il faut récupérer les valeurs du xml et les appliquer aux valeurs du java
+     * if faut attacher le xml aux param java
+     * il faut mettre à jour le delete
      * @param savedInstanceState If the fragment is being re-created from
      * a previous saved state, this is the state.
      */
     @Override
     public void onCreate(Bundle savedInstanceState){
+        Log.e("onCreate","on entre");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         lblNoTasks = getActivity().findViewById(R.id.lbl_no_task);
@@ -82,30 +83,25 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater){
+        Log.e("onCreateOM","on entre");
         inflater.inflate(R.menu.actions, menu);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        Log.e("onCreateV","on entre");
         return inflater.inflate(R.layout.item_task, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
+        Log.e("onVCreate","on entre");
         super.onViewCreated(view, savedInstanceState);
         Context context = view.getContext();
-        listTasks = new RecyclerView(context);
+        listTasks = view.findViewById(R.id.container);
         listTasks.setLayoutManager(new LinearLayoutManager(context));
         listTasks.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         setHasOptionsMenu(true);
-        dataViewModel.getAllTasksFromVm().observe(getViewLifecycleOwner(), tasks ->
-        {
-            if (tasks != null && !tasks.isEmpty()) {
-                dataAdapter = new TasksAdapter(tasks, this);
-                tmpList = tasks;
-            }
-        });
-        listTasks.setAdapter(new TasksAdapter(tmpList, this));
     }
 
     /**
@@ -118,9 +114,18 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         updateTasks();
     }
 
-    /*private void initList(){
-
-    }*/
+    private void initList(){
+        Log.e("initlist","on entre");
+        dataViewModel.getAllTasksFromVm().observe(getViewLifecycleOwner(), tasks ->
+        {
+            if (tasks != null && !tasks.isEmpty()) {
+                tmpList=tasks;
+                dataAdapter = new TasksAdapter(tmpList, this);
+                listTasks.setAdapter(dataAdapter);
+                updateTasks();
+            }
+        });
+    }
 
     private void onPositiveButtonClick(DialogInterface dialogInterface) {
         // If dialog is open
@@ -216,10 +221,12 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     }
 
     private void updateTasks() {
-        if (dataViewModel.getAllTasksFromVm() == null) {
+        Log.e("updateTasks","on entre");
+        if (tmpList == null) {
             lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.GONE);
         } else {
+            Log.e("tmplist", ""+tmpList.size());
             lblNoTasks.setVisibility(View.GONE);
             listTasks.setVisibility(View.VISIBLE);
             switch (sortMethod) {
@@ -245,7 +252,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     @Override
     public void onResume() {
         super.onResume();
-        //initList();
+        initList();
     }
 
     @Override
