@@ -87,12 +87,25 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.item_task, container, false);
+        return inflater.inflate(R.layout.item_task, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
+        super.onViewCreated(view, savedInstanceState);
         Context context = view.getContext();
-        listTasks = new RecyclerView (context);
+        listTasks = new RecyclerView(context);
         listTasks.setLayoutManager(new LinearLayoutManager(context));
         listTasks.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        return view;
+        setHasOptionsMenu(true);
+        dataViewModel.getAllTasksFromVm().observe(getViewLifecycleOwner(), tasks ->
+        {
+            if (tasks != null && !tasks.isEmpty()) {
+                dataAdapter = new TasksAdapter(tasks, this);
+                tmpList = tasks;
+            }
+        });
+        listTasks.setAdapter(new TasksAdapter(tmpList, this));
     }
 
     /**
@@ -105,16 +118,9 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         updateTasks();
     }
 
-    private void initList(){
-        dataViewModel.getAllTasksFromVm().observe(this, tasks ->
-        {
-            if (tasks != null && !tasks.isEmpty()) {
-                dataAdapter = new TasksAdapter(tasks, this);
-                tmpList = tasks;
-            }
-        });
-        listTasks.setAdapter(new TasksAdapter(tmpList, this));
-    }
+    /*private void initList(){
+
+    }*/
 
     private void onPositiveButtonClick(DialogInterface dialogInterface) {
         // If dialog is open
@@ -239,7 +245,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     @Override
     public void onResume() {
         super.onResume();
-        initList();
+        //initList();
     }
 
     @Override
