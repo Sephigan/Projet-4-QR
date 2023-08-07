@@ -25,8 +25,10 @@ public class DataViewModel extends AndroidViewModel {
     }
 
     public void init(){
+        Log.e("init","on entre");
         listLiveDataTask = dataRepository.getAllTasks();
         listLiveDataProject = dataRepository.getAllProjects();
+        Log.e("init","on sort");
     }
 
     public LiveData<List<Task>> getAllTasksFromVm() { return listLiveDataTask; }

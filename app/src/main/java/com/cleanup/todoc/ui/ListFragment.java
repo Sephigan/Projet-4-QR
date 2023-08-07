@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -70,38 +71,35 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         Log.e("onCreate","on entre");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        lblNoTasks = getActivity().findViewById(R.id.lbl_no_task);
         dataViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(DataViewModel.class);
         dataViewModel.init();
-        getActivity().findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showAddTaskDialog();
-            }
-        });
+        Log.e("onCreate","on sort");
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater){
         Log.e("onCreateOM","on entre");
         inflater.inflate(R.menu.actions, menu);
+        Log.e("onCreateOM","on sort");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        Log.e("onCreateV","on entre");
-        return inflater.inflate(R.layout.item_task, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
-        Log.e("onVCreate","on entre");
+        View view = inflater.inflate(R.layout.fragment_list, container, false);
         super.onViewCreated(view, savedInstanceState);
         Context context = view.getContext();
         listTasks = view.findViewById(R.id.container);
+        lblNoTasks = view.findViewById(R.id.lbl_no_task);
         listTasks.setLayoutManager(new LinearLayoutManager(context));
-        listTasks.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-        setHasOptionsMenu(true);
+        listTasks.addItemDecoration(new DividerItemDecoration(context, DividerItemDecoration.VERTICAL));
+        view.findViewById(R.id.fab_add_task).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddTaskDialog();
+            }
+        });
+        Log.e("onVCreate","on sort");
+        return view;
     }
 
     /**
@@ -125,6 +123,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
                 updateTasks();
             }
         });
+        Log.e("initlist","on sort");
     }
 
     private void onPositiveButtonClick(DialogInterface dialogInterface) {

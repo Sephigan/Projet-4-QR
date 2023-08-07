@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //ButterKnife.bind(this);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.container,new ListFragment());
+        ft.add(R.id.main_page,new ListFragment());
         ft.commit();
     }
 }
