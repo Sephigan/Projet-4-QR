@@ -29,9 +29,8 @@ public interface TaskDao {
     @Query("SELECT * from Task ORDER By id Asc")
     LiveData<List<Task>> getTasks();
 
-    @Query("DELETE from Task")
-    default void deleteAll() {
-
+    @Query("DELETE from Task WHERE id = :id")
+    default void deleteTask(Long id) {
     }
 
     @Query("SELECT * FROM Task ORDER BY name ASC")

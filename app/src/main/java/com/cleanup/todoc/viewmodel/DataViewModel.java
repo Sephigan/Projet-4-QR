@@ -18,6 +18,14 @@ public class DataViewModel extends AndroidViewModel {
     private LiveData<List<Task>> listLiveDataTask = new LiveData<List<Task>>() {
     };
     private LiveData<List<Project>> listLiveDataProject;
+    private LiveData<List<Task>> listLiveDataProjectAZ = new LiveData<List<Task>>() {
+    };;
+    private LiveData<List<Task>> listLiveDataProjectZA = new LiveData<List<Task>>() {
+    };;
+    private LiveData<List<Task>> listLiveDataProjecCTS = new LiveData<List<Task>>() {
+    };;
+    private LiveData<List<Task>> listLiveDataProjectCTSR = new LiveData<List<Task>>() {
+    };;
 
     public DataViewModel(Application application) {
         super(application);
@@ -28,6 +36,10 @@ public class DataViewModel extends AndroidViewModel {
         Log.e("init","on entre");
         listLiveDataTask = dataRepository.getAllTasks();
         listLiveDataProject = dataRepository.getAllProjects();
+        listLiveDataProjectAZ = dataRepository.orderAlphaAZ();
+        listLiveDataProjectZA = dataRepository.orderAlphaZA();
+        listLiveDataProjecCTS = dataRepository.orderCreationAsc();
+        listLiveDataProjectCTSR = dataRepository.orderCreationDesc();
         Log.e("init","on sort");
     }
 
@@ -43,23 +55,23 @@ public class DataViewModel extends AndroidViewModel {
 
     public void insertProject(Project project) { dataRepository.insertProject(project); }
 
-    public void deleteTask(Task task){
-        dataRepository.deleteTask(task);
+    public void deleteTask(Long id){
+        dataRepository.deleteTask(id);
     }
 
-    public void orderAlphaAZ(){
-        dataRepository.orderAlphaAZ();
+    public LiveData<List<Task>> orderAlphaAZ(){
+        return listLiveDataProjectAZ;
     }
 
-    public void orderAlphaZA(){
-        dataRepository.orderAlphaZA();
+    public LiveData<List<Task>> orderAlphaZA(){
+        return listLiveDataProjectZA;
     }
 
-    public void orderCreationAsc(){
-        dataRepository.orderCreationAsc();
+    public LiveData<List<Task>> orderCreationAsc(){
+        return listLiveDataProjecCTS;
     }
 
-    public void orderCreationDesc(){
-        dataRepository.orderCreationDesc();
+    public LiveData<List<Task>> orderCreationDesc(){
+        return listLiveDataProjectCTSR;
     }
 }

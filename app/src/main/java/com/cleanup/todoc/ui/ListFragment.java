@@ -59,6 +59,8 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     private TasksAdapter dataAdapter;
     private List<Task> tmpList;
 
+    private int filter=0;
+
     /**
      * Il faut récupérer les valeurs du xml et les appliquer aux valeurs du java
      * if faut attacher le xml aux param java
@@ -68,19 +70,15 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
      */
     @Override
     public void onCreate(Bundle savedInstanceState){
-        Log.e("onCreate","on entre");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         dataViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(DataViewModel.class);
         dataViewModel.init();
-        Log.e("onCreate","on sort");
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater){
-        Log.e("onCreateOM","on entre");
         inflater.inflate(R.menu.actions, menu);
-        Log.e("onCreateOM","on sort");
     }
 
     @Override
@@ -98,7 +96,6 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
                 showAddTaskDialog();
             }
         });
-        Log.e("onVCreate","on sort");
         return view;
     }
 
@@ -108,12 +105,11 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
      */
     @Override
     public void onDeleteTask(Task task) {
-        dataViewModel.deleteTask(task);
+        dataViewModel.deleteTask(task.getId());
         updateTasks();
     }
 
     private void initList(){
-        Log.e("initlist","on entre");
         dataViewModel.getAllTasksFromVm().observe(getViewLifecycleOwner(), tasks ->
         {
             if (tasks != null && !tasks.isEmpty()) {
@@ -123,7 +119,6 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
                 updateTasks();
             }
         });
-        Log.e("initlist","on sort");
     }
 
     private void onPositiveButtonClick(DialogInterface dialogInterface) {
@@ -220,26 +215,56 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     }
 
     private void updateTasks() {
-        Log.e("updateTasks","on entre");
         if (tmpList == null) {
             lblNoTasks.setVisibility(View.VISIBLE);
             listTasks.setVisibility(View.GONE);
         } else {
-            Log.e("tmplist", ""+tmpList.size());
             lblNoTasks.setVisibility(View.GONE);
             listTasks.setVisibility(View.VISIBLE);
             switch (sortMethod) {
                 case ALPHABETICAL:
-                    dataViewModel.orderAlphaAZ();
+                    //dataViewModel.orderAlphaAZ();
+                    dataViewModel.orderAlphaAZ().observe(getViewLifecycleOwner(), tasks ->
+                    {
+                        if (tasks != null && !tasks.isEmpty()) {
+                            tmpList=tasks;
+                            dataAdapter = new TasksAdapter(tmpList, this);
+                            listTasks.setAdapter(dataAdapter);
+                        }
+                    });
                     break;
                 case ALPHABETICAL_INVERTED:
-                    dataViewModel.orderAlphaZA();
+                    //dataViewModel.orderAlphaZA();
+                    dataViewModel.orderAlphaZA().observe(getViewLifecycleOwner(), tasks ->
+                    {
+                        if (tasks != null && !tasks.isEmpty()) {
+                            tmpList=tasks;
+                            dataAdapter = new TasksAdapter(tmpList, this);
+                            listTasks.setAdapter(dataAdapter);
+                        }
+                    });
                     break;
                 case RECENT_FIRST:
-                    dataViewModel.orderCreationAsc();
+                    //dataViewModel.orderCreationAsc();
+                    dataViewModel.orderCreationDesc().observe(getViewLifecycleOwner(), tasks ->
+                    {
+                        if (tasks != null && !tasks.isEmpty()) {
+                            tmpList=tasks;
+                            dataAdapter = new TasksAdapter(tmpList, this);
+                            listTasks.setAdapter(dataAdapter);
+                        }
+                    });
                     break;
                 case OLD_FIRST:
-                    dataViewModel.orderCreationDesc();
+                    //dataViewModel.orderCreationDesc();
+                    dataViewModel.orderCreationAsc().observe(getViewLifecycleOwner(), tasks ->
+                    {
+                        if (tasks != null && !tasks.isEmpty()) {
+                            tmpList=tasks;
+                            dataAdapter = new TasksAdapter(tmpList, this);
+                            listTasks.setAdapter(dataAdapter);
+                        }
+                    });
                     break;
 
             }
