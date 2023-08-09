@@ -3,6 +3,7 @@ package com.cleanup.todoc.database;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -29,7 +30,7 @@ public interface TaskDao {
     @Query("SELECT * from Task ORDER By id Asc")
     LiveData<List<Task>> getTasks();
 
-    @Query("DELETE from Task WHERE id = :id")
+    @Delete
     default void deleteTask(Long id) {
     }
 

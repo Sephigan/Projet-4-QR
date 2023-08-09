@@ -18,14 +18,6 @@ public class DataViewModel extends AndroidViewModel {
     private LiveData<List<Task>> listLiveDataTask = new LiveData<List<Task>>() {
     };
     private LiveData<List<Project>> listLiveDataProject;
-    private LiveData<List<Task>> listLiveDataProjectAZ = new LiveData<List<Task>>() {
-    };;
-    private LiveData<List<Task>> listLiveDataProjectZA = new LiveData<List<Task>>() {
-    };;
-    private LiveData<List<Task>> listLiveDataProjecCTS = new LiveData<List<Task>>() {
-    };;
-    private LiveData<List<Task>> listLiveDataProjectCTSR = new LiveData<List<Task>>() {
-    };;
 
     public DataViewModel(Application application) {
         super(application);
@@ -36,10 +28,6 @@ public class DataViewModel extends AndroidViewModel {
         Log.e("init","on entre");
         listLiveDataTask = dataRepository.getAllTasks();
         listLiveDataProject = dataRepository.getAllProjects();
-        listLiveDataProjectAZ = dataRepository.orderAlphaAZ();
-        listLiveDataProjectZA = dataRepository.orderAlphaZA();
-        listLiveDataProjecCTS = dataRepository.orderCreationAsc();
-        listLiveDataProjectCTSR = dataRepository.orderCreationDesc();
         Log.e("init","on sort");
     }
 
@@ -60,18 +48,22 @@ public class DataViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Task>> orderAlphaAZ(){
-        return listLiveDataProjectAZ;
+        listLiveDataTask = dataRepository.orderAlphaAZ();
+        return listLiveDataTask;
     }
 
     public LiveData<List<Task>> orderAlphaZA(){
-        return listLiveDataProjectZA;
+        listLiveDataTask = dataRepository.orderAlphaZA();
+        return listLiveDataTask;
     }
 
     public LiveData<List<Task>> orderCreationAsc(){
-        return listLiveDataProjecCTS;
+        listLiveDataTask = dataRepository.orderCreationAsc();
+        return listLiveDataTask;
     }
 
     public LiveData<List<Task>> orderCreationDesc(){
-        return listLiveDataProjectCTSR;
+        listLiveDataTask = dataRepository.orderCreationDesc();
+        return listLiveDataTask;
     }
 }

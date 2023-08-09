@@ -20,10 +20,6 @@ public class DataRepository {
 
     private LiveData<List<Project>> listProjects;
     private LiveData<List<Task>> listTasks;
-    private LiveData<List<Task>> listTasksAZ;
-    private LiveData<List<Task>> listTasksZA;
-    private LiveData<List<Task>> listTasksCTS;
-    private LiveData<List<Task>> listTasksCTSR;
 
     public DataRepository(Application application) {
         appDatabase = AppDatabase.getDatabase(application);
@@ -31,10 +27,6 @@ public class DataRepository {
         projectDao = appDatabase.projectDao();
         listTasks = taskDao.getTasks();
         listProjects = projectDao.getProjects();
-        listTasksAZ = taskDao.orderAlphaAZ();
-        listTasksZA = taskDao.orderAlphaZA();
-        listTasksCTS = taskDao.orderCreationAsc();
-        listTasksCTSR = taskDao.orderCreationDesc();
     }
 
     public void insertTask(Task task) {
@@ -59,22 +51,26 @@ public class DataRepository {
 
     public LiveData<List<Task>> orderAlphaAZ()
     {
-        return listTasksAZ;
+        listTasks = taskDao.orderAlphaAZ();
+        return listTasks;
     }
 
     public LiveData<List<Task>> orderAlphaZA()
     {
-        return listTasksZA;
+        listTasks = taskDao.orderAlphaZA();
+        return listTasks;
     }
 
     public LiveData<List<Task>> orderCreationAsc()
     {
-        return listTasksCTS;
+        listTasks = taskDao.orderCreationAsc();
+        return listTasks;
     }
 
     public LiveData<List<Task>> orderCreationDesc()
     {
-        return listTasksCTSR;
+        listTasks = taskDao.orderCreationDesc();
+        return listTasks;
     }
 
 }
