@@ -30,9 +30,8 @@ public interface TaskDao {
     @Query("SELECT * from Task ORDER By id Asc")
     LiveData<List<Task>> getTasks();
 
-    @Delete
-    default void deleteTask(Long id) {
-    }
+    @Delete(entity = Task.class)
+    void deleteTask(Task task);
 
     @Query("SELECT * FROM Task ORDER BY name ASC")
     LiveData<List<Task>> orderAlphaAZ();

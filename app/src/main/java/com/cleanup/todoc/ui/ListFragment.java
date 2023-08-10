@@ -30,11 +30,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cleanup.todoc.R;
+import com.cleanup.todoc.database.AppDatabase;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.repository.DataRepository;
 import com.cleanup.todoc.viewmodel.DataViewModel;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -105,7 +107,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
      */
     @Override
     public void onDeleteTask(Task task) {
-        dataViewModel.deleteTask(task.getId());
+        dataViewModel.deleteTask(task);
         updateTasks();
     }
 

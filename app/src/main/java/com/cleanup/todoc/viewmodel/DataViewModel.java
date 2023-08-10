@@ -43,8 +43,8 @@ public class DataViewModel extends AndroidViewModel {
 
     public void insertProject(Project project) { dataRepository.insertProject(project); }
 
-    public void deleteTask(Long id){
-        dataRepository.deleteTask(id);
+    public void deleteTask(Task task){
+        dataRepository.deleteTask(task);
     }
 
     public LiveData<List<Task>> orderAlphaAZ(){

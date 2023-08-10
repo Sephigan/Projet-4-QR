@@ -45,8 +45,8 @@ public class DataRepository {
         return listProjects;
     }
 
-    public void deleteTask(Long id){
-        taskDao.deleteTask(id);
+    public void deleteTask(Task task){
+        taskDao.deleteTask(task);
     }
 
     public LiveData<List<Task>> orderAlphaAZ()
