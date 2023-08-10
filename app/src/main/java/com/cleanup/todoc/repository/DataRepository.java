@@ -46,7 +46,7 @@ public class DataRepository {
     }
 
     public void deleteTask(Task task){
-        taskDao.deleteTask(task);
+        AppDatabase.databaseWriteExecutor.execute(() -> taskDao.deleteTask(task));
     }
 
     public LiveData<List<Task>> orderAlphaAZ()
