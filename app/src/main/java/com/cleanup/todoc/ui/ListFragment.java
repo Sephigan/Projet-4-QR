@@ -108,7 +108,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     @Override
     public void onDeleteTask(Task task) {
         dataViewModel.deleteTask(task);
-        updateTasks();
+        initList();
     }
 
     private void initList(){
@@ -118,7 +118,12 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
                 tmpList=tasks;
                 dataAdapter = new TasksAdapter(tmpList, this);
                 listTasks.setAdapter(dataAdapter);
-                updateTasks();
+                lblNoTasks.setVisibility(View.GONE);
+                listTasks.setVisibility(View.VISIBLE);
+            }
+            else{
+                lblNoTasks.setVisibility(View.VISIBLE);
+                listTasks.setVisibility(View.GONE);
             }
         });
     }
@@ -152,7 +157,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
                         new Date().getTime()
                 );
                 dataViewModel.insertTask(task);
-                updateTasks();
+                initList();
                 dialogInterface.dismiss();
             }
             // If name has been set, but project has not been set (this should never occur)
@@ -216,64 +221,23 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         return dialog;
     }
 
-    private void updateTasks() {
-        if (tmpList == null) {
-            lblNoTasks.setVisibility(View.VISIBLE);
-            listTasks.setVisibility(View.GONE);
-        } else {
-            lblNoTasks.setVisibility(View.GONE);
-            listTasks.setVisibility(View.VISIBLE);
-            switch (sortMethod) {
-                case ALPHABETICAL:
-                    //dataViewModel.orderAlphaAZ();
-                    dataViewModel.orderAlphaAZ().observe(getViewLifecycleOwner(), tasks ->
-                    {
-                        if (tasks != null && !tasks.isEmpty()) {
-                            tmpList=tasks;
-                            dataAdapter = new TasksAdapter(tmpList, this);
-                            listTasks.setAdapter(dataAdapter);
-                        }
-                    });
-                    break;
-                case ALPHABETICAL_INVERTED:
-                    //dataViewModel.orderAlphaZA();
-                    dataViewModel.orderAlphaZA().observe(getViewLifecycleOwner(), tasks ->
-                    {
-                        if (tasks != null && !tasks.isEmpty()) {
-                            tmpList=tasks;
-                            dataAdapter = new TasksAdapter(tmpList, this);
-                            listTasks.setAdapter(dataAdapter);
-                        }
-                    });
-                    break;
-                case RECENT_FIRST:
-                    //dataViewModel.orderCreationAsc();
-                    dataViewModel.orderCreationDesc().observe(getViewLifecycleOwner(), tasks ->
-                    {
-                        if (tasks != null && !tasks.isEmpty()) {
-                            tmpList=tasks;
-                            dataAdapter = new TasksAdapter(tmpList, this);
-                            listTasks.setAdapter(dataAdapter);
-                        }
-                    });
-                    break;
-                case OLD_FIRST:
-                    //dataViewModel.orderCreationDesc();
-                    dataViewModel.orderCreationAsc().observe(getViewLifecycleOwner(), tasks ->
-                    {
-                        if (tasks != null && !tasks.isEmpty()) {
-                            tmpList=tasks;
-                            dataAdapter = new TasksAdapter(tmpList, this);
-                            listTasks.setAdapter(dataAdapter);
-                        }
-                    });
-                    break;
-
-            }
+    private void sortTasks(){
+        switch (sortMethod) {
+            case ALPHABETICAL:
+                dataViewModel.orderAlphaAZ();
+                break;
+            case ALPHABETICAL_INVERTED:
+                dataViewModel.orderAlphaZA();
+                break;
+            case RECENT_FIRST:
+                dataViewModel.orderCreationDesc();
+                break;
+            case OLD_FIRST:
+                dataViewModel.orderCreationAsc();
+                break;
         }
+        initList();
     }
-
-
 
     @Override
     public void onResume() {
@@ -310,7 +274,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         } else if (id == R.id.filter_recent_first) {
             sortMethod = SortMethod.RECENT_FIRST;
         }
-        updateTasks();
+        sortTasks();
         return super.onOptionsItemSelected(item);
     }
 

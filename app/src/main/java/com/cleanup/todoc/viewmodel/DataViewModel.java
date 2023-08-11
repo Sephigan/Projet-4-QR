@@ -25,10 +25,8 @@ public class DataViewModel extends AndroidViewModel {
     }
 
     public void init(){
-        Log.e("init","on entre");
         listLiveDataTask = dataRepository.getAllTasks();
         listLiveDataProject = dataRepository.getAllProjects();
-        Log.e("init","on sort");
     }
 
     public LiveData<List<Task>> getAllTasksFromVm() { return listLiveDataTask; }
@@ -47,23 +45,19 @@ public class DataViewModel extends AndroidViewModel {
         dataRepository.deleteTask(task);
     }
 
-    public LiveData<List<Task>> orderAlphaAZ(){
+    public void orderAlphaAZ(){
         listLiveDataTask = dataRepository.orderAlphaAZ();
-        return listLiveDataTask;
     }
 
-    public LiveData<List<Task>> orderAlphaZA(){
+    public void orderAlphaZA(){
         listLiveDataTask = dataRepository.orderAlphaZA();
-        return listLiveDataTask;
     }
 
-    public LiveData<List<Task>> orderCreationAsc(){
+    public void orderCreationAsc(){
         listLiveDataTask = dataRepository.orderCreationAsc();
-        return listLiveDataTask;
     }
 
-    public LiveData<List<Task>> orderCreationDesc(){
+    public void orderCreationDesc(){
         listLiveDataTask = dataRepository.orderCreationDesc();
-        return listLiveDataTask;
     }
 }
