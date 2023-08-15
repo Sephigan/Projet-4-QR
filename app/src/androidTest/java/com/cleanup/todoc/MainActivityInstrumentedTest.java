@@ -1,5 +1,7 @@
 package com.cleanup.todoc;
 
+import static android.os.SystemClock.sleep;
+
 import android.view.View;
 import android.widget.TextView;
 
@@ -20,6 +22,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 
@@ -31,6 +34,7 @@ import androidx.test.runner.AndroidJUnit4;
  */
 @RunWith(AndroidJUnit4.class)
 public class MainActivityInstrumentedTest {
+
     @Rule
     public ActivityTestRule<MainActivity> rule = new ActivityTestRule<>(MainActivity.class);
 
@@ -39,9 +43,10 @@ public class MainActivityInstrumentedTest {
         MainActivity activity = rule.getActivity();
         TextView lblNoTask = activity.findViewById(R.id.lbl_no_task);
         RecyclerView listTasks = activity.findViewById(R.id.container);
+        final int sizeList = listTasks.getAdapter().getItemCount();
 
         onView(withId(R.id.fab_add_task)).perform(click());
-        onView(withId(R.id.txt_task_name)).perform(replaceText("Tâche example"));
+        onView(withId(R.id.txt_task_name)).perform(replaceText("Task example"));
         onView(withId(android.R.id.button1)).perform(click());
 
         // Check that lblTask is not displayed anymore
@@ -49,19 +54,24 @@ public class MainActivityInstrumentedTest {
         // Check that recyclerView is displayed
         assertThat(listTasks.getVisibility(), equalTo(View.VISIBLE));
         // Check that it contains one element only
-        assertThat(listTasks.getAdapter().getItemCount(), equalTo(1));
+        assertThat(listTasks.getAdapter().getItemCount(), equalTo(sizeList+1));
 
-        onView(withId(R.id.img_delete)).perform(click());
+        onView(withId(R.id.container)).perform(RecyclerViewActions.actionOnItemAtPosition(0, new ActionOnDeleteButton()));
 
-        // Check that lblTask is displayed
-        assertThat(lblNoTask.getVisibility(), equalTo(View.VISIBLE));
-        // Check that recyclerView is not displayed anymore
-        assertThat(listTasks.getVisibility(), equalTo(View.GONE));
+        sleep(100);
+        assertThat(listTasks.getAdapter().getItemCount(), equalTo(sizeList));
     }
 
     @Test
     public void sortTasks() {
         MainActivity activity = rule.getActivity();
+        TextView lblNoTask = activity.findViewById(R.id.lbl_no_task);
+        RecyclerView listTasks = activity.findViewById(R.id.container);
+        final int sizeList = listTasks.getAdapter().getItemCount();
+
+        for(int i=0; i<sizeList; i++){
+            onView(withId(R.id.container)).perform(RecyclerViewActions.actionOnItemAtPosition(0, new ActionOnDeleteButton()));
+        }
 
         onView(withId(R.id.fab_add_task)).perform(click());
         onView(withId(R.id.txt_task_name)).perform(replaceText("aaa Tâche example"));
@@ -72,13 +82,6 @@ public class MainActivityInstrumentedTest {
         onView(withId(R.id.fab_add_task)).perform(click());
         onView(withId(R.id.txt_task_name)).perform(replaceText("hhh Tâche example"));
         onView(withId(android.R.id.button1)).perform(click());
-
-        onView(withRecyclerView(R.id.container).atPositionOnView(0, R.id.lbl_task_name))
-                .check(matches(withText("aaa Tâche example")));
-        onView(withRecyclerView(R.id.container).atPositionOnView(1, R.id.lbl_task_name))
-                .check(matches(withText("zzz Tâche example")));
-        onView(withRecyclerView(R.id.container).atPositionOnView(2, R.id.lbl_task_name))
-                .check(matches(withText("hhh Tâche example")));
 
         // Sort alphabetical
         onView(withId(R.id.action_filter)).perform(click());

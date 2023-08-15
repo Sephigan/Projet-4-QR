@@ -3,6 +3,7 @@ package com.cleanup.todoc;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.ui.MainActivity;
+import com.cleanup.todoc.ui.TasksAdapter;
 import com.cleanup.todoc.viewmodel.DataViewModel;
 
 import org.junit.Test;
@@ -15,6 +16,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
+import android.app.Application;
+import android.view.View;
 import android.widget.ArrayAdapter;
 
 import androidx.lifecycle.ViewModelProvider;
@@ -39,6 +42,31 @@ public class TaskUnitTest {
         assertEquals("Projet Tartampion", task1.getProject().getName());
         assertEquals("Projet Lucidia", task2.getProject().getName());
         assertEquals("Projet Circus", task3.getProject().getName());
+    }
+
+    @Test
+    public void add_Task(){
+        /*
+        add task to table
+        check if task is in table
+         */
+    }
+
+    @Test
+    public void supp_Task(){
+        /*
+        check if task is in table
+        supp task
+        check is task isn't in table
+        */
+    }
+
+    @Test
+    public void check_Table_appOffline(){
+        /*
+        check if table are empty
+        if empty = false
+        */
     }
 
     @Test
