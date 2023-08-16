@@ -44,4 +44,7 @@ public interface TaskDao {
 
     @Query("SELECT * FROM Task ORDER BY creationTimestamp DESC")
     LiveData<List<Task>> orderCreationDesc();
+
+    @Query("SELECT COUNT(*) FROM Task")
+    int countTasks();
 }
