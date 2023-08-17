@@ -63,7 +63,7 @@ public class TaskUnitTest {
         doNothing().when(taskDao).insertTask(any(Task.class));
 
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
-        TestTaskRepository.insertTask(testTask);
+        taskRepository.insertTask(testTask);
 
         verify(taskDao, times(1)).insertTask(eq(testTask));
     }
@@ -81,21 +81,33 @@ public class TaskUnitTest {
 
     @Test
     public void supp_Task(){
-        /*
-        check if task is in table
-        supp task
-        check is task isn't in table
-        */
+        doNothing().when(taskDao).deleteTask(any(Task.class));
+
+        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        taskRepository.insertTask(testTask);
+        taskRepository.deleteTask(testTask);
+        verify(taskDao, times(1)).deleteTask(eq(testTask));
     }
 
-    @Test
+    /*@Test
     public void filter_Task(){
-        /*
-        check table
-        apply filter
-        check table modification
-        */
-    }
+        doNothing().when(taskDao).orderAlphaAZ();
+        doNothing().when(taskDao).orderAlphaZA();
+        doNothing().when(taskDao).orderCreationAsc();
+        doNothing().when(taskDao).orderCreationDesc();
+        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        Task testTask2 = new Task(2, p2, "Test add2", new Date().getTime());
+        taskRepository.insertTask(testTask);
+        taskRepository.insertTask(testTask2);
+        taskRepository.orderAlphaAZ();
+        taskRepository.orderAlphaZA();
+        taskRepository.orderCreationAsc();
+        taskRepository.orderCreationDesc();
+        verify(taskDao, times(1)).orderAlphaAZ();
+        verify(taskDao, times(1)).orderAlphaZA();
+        verify(taskDao, times(1)).orderCreationAsc();
+        verify(taskDao, times(1)).orderCreationDesc();
+    }*/
 
     @Test
     public void test_az_comparator() {
