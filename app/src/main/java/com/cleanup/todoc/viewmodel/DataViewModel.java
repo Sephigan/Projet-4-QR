@@ -15,13 +15,11 @@ import java.util.List;
 
 public class DataViewModel extends AndroidViewModel {
     private DataRepository dataRepository;
-    private LiveData<List<Task>> listLiveDataTask = new LiveData<List<Task>>() {
-    };
+    private LiveData<List<Task>> listLiveDataTask;
     private LiveData<List<Project>> listLiveDataProject;
 
-    public DataViewModel(Application application) {
-        super(application);
-        dataRepository = new DataRepository(application);
+    public DataViewModel(DataRepository dataRepo) {
+        //A Faire
     }
 
     public void init(){

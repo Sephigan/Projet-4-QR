@@ -18,7 +18,7 @@ import java.util.List;
 
 @TypeConverters(Converters.class)
 @Dao
-public interface TaskDao {
+public class TaskDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertTask(Task task);
 

@@ -3,21 +3,29 @@ package com.cleanup.todoc.repository;
 import androidx.lifecycle.LiveData;
 
 import com.cleanup.todoc.database.AppDatabase;
+import com.cleanup.todoc.database.ProjectDao;
 import com.cleanup.todoc.database.TaskDao;
+import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 
 import java.util.List;
 
-public class TestTaskRepository {
+public class TestRepository {
 
     private static TaskDao taskDao;
+    private static ProjectDao projectDao;
 
-    public TestTaskRepository(AppDatabase appDatabase) {
+    public TestRepository(AppDatabase appDatabase) {
         taskDao = appDatabase.taskDao();
+        projectDao = appDatabase.projectDao();
     }
 
     public static void insertTask(Task task) {
         taskDao.insertTask(task);
+    }
+
+    public void insertProject(Project project) {
+        projectDao.insertProject(project);
     }
 
     public static void deleteTask(Task task){

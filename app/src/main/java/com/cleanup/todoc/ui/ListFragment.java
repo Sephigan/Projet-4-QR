@@ -61,12 +61,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     private TasksAdapter dataAdapter;
     private List<Task> tmpList;
 
-    private int filter=0;
-
     /**
-     * Il faut récupérer les valeurs du xml et les appliquer aux valeurs du java
-     * if faut attacher le xml aux param java
-     * il faut mettre à jour le delete
      * @param savedInstanceState If the fragment is being re-created from
      * a previous saved state, this is the state.
      */

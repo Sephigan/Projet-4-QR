@@ -21,12 +21,8 @@ public class DataRepository {
     private LiveData<List<Project>> listProjects;
     private LiveData<List<Task>> listTasks;
 
-    public DataRepository(Application application) {
-        appDatabase = AppDatabase.getDatabase(application);
-        taskDao = appDatabase.taskDao();
-        projectDao = appDatabase.projectDao();
-        listTasks = taskDao.getTasks();
-        listProjects = projectDao.getProjects();
+    public DataRepository(TaskDao taskDao, ProjectDao projectDao) {
+        //A Faire
     }
 
     public void insertTask(Task task) {
@@ -34,7 +30,7 @@ public class DataRepository {
     }
 
     public LiveData<List<Task>> getAllTasks() {
-        return listTasks;
+        return taskDao.getTasks();
     }
 
     public void insertProject(Project project) {
@@ -42,7 +38,7 @@ public class DataRepository {
     }
 
     public LiveData<List<Project>> getAllProjects() {
-        return listProjects;
+        return projectDao.getProjects();
     }
 
     public void deleteTask(Task task){
