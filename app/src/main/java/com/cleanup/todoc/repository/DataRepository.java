@@ -15,57 +15,58 @@ import java.util.List;
 
 public class DataRepository {
     AppDatabase appDatabase;
-    TaskDao taskDao;
-    ProjectDao projectDao;
+    TaskDao myTaskDao;
+    ProjectDao myProjectDao;
 
     private LiveData<List<Project>> listProjects;
     private LiveData<List<Task>> listTasks;
 
     public DataRepository(TaskDao taskDao, ProjectDao projectDao) {
-        //A Faire
+        myTaskDao = taskDao;
+        myProjectDao = projectDao;
     }
 
     public void insertTask(Task task) {
-        AppDatabase.databaseWriteExecutor.execute(() -> taskDao.insertTask(task));
+        AppDatabase.databaseWriteExecutor.execute(() -> myTaskDao.insertTask(task));
     }
 
     public LiveData<List<Task>> getAllTasks() {
-        return taskDao.getTasks();
+        return myTaskDao.getTasks();
     }
 
     public void insertProject(Project project) {
-        projectDao.insertProject(project);
+        myProjectDao.insertProject(project);
     }
 
     public LiveData<List<Project>> getAllProjects() {
-        return projectDao.getProjects();
+        return myProjectDao.getProjects();
     }
 
     public void deleteTask(Task task){
-        AppDatabase.databaseWriteExecutor.execute(() -> taskDao.deleteTask(task));
+        AppDatabase.databaseWriteExecutor.execute(() -> myTaskDao.deleteTask(task));
     }
 
     public LiveData<List<Task>> orderAlphaAZ()
     {
-        listTasks = taskDao.orderAlphaAZ();
+        listTasks = myTaskDao.orderAlphaAZ();
         return listTasks;
     }
 
     public LiveData<List<Task>> orderAlphaZA()
     {
-        listTasks = taskDao.orderAlphaZA();
+        listTasks = myTaskDao.orderAlphaZA();
         return listTasks;
     }
 
     public LiveData<List<Task>> orderCreationAsc()
     {
-        listTasks = taskDao.orderCreationAsc();
+        listTasks = myTaskDao.orderCreationAsc();
         return listTasks;
     }
 
     public LiveData<List<Task>> orderCreationDesc()
     {
-        listTasks = taskDao.orderCreationDesc();
+        listTasks = myTaskDao.orderCreationDesc();
         return listTasks;
     }
 

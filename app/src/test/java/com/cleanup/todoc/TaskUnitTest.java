@@ -4,6 +4,7 @@ import com.cleanup.todoc.database.AppDatabase;
 import com.cleanup.todoc.database.ProjectDao;
 import com.cleanup.todoc.database.TaskDao;
 import com.cleanup.todoc.model.Project;
+import com.cleanup.todoc.repository.DataRepository;
 import com.cleanup.todoc.viewmodel.DataViewModel;
 
 import org.junit.Before;
@@ -36,9 +37,10 @@ public class TaskUnitTest {
     private ProjectDao projectDao;
     @Mock
     Context context;
-
     @InjectMocks
     private DataViewModel dVM;
+    @InjectMocks
+    private DataRepository dataRepo;
 
     Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
     Project p2 = new Project(2L, "Projet Lucidia", 0xFFB4CDBA);
@@ -49,7 +51,8 @@ public class TaskUnitTest {
         MockitoAnnotations.initMocks(this);
         when(database.taskDao()).thenReturn(taskDao);
         when(database.projectDao()).thenReturn(projectDao);
-        dVM = new DataViewModel(this, re);
+        dataRepo = new DataRepository(taskDao,projectDao);
+        dVM = new DataViewModel(this, dataRepo);
     }
 
     /*@Test

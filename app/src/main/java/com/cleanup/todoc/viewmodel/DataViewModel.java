@@ -13,13 +13,12 @@ import com.cleanup.todoc.repository.DataRepository;
 
 import java.util.List;
 
-public class DataViewModel extends AndroidViewModel {
+public class DataViewModel{
     private DataRepository dataRepository;
     private LiveData<List<Task>> listLiveDataTask;
     private LiveData<List<Project>> listLiveDataProject;
 
-    public DataViewModel(Application application, DataRepository dataRepo) {
-        super(application);
+    public DataViewModel(DataRepository dataRepo) {
         dataRepository = dataRepo;
         init();
     }
