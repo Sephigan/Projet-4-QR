@@ -4,21 +4,14 @@ import com.cleanup.todoc.database.AppDatabase;
 import com.cleanup.todoc.database.ProjectDao;
 import com.cleanup.todoc.database.TaskDao;
 import com.cleanup.todoc.model.Project;
-import com.cleanup.todoc.model.Task;
-import com.cleanup.todoc.repository.TestRepository;
-import com.cleanup.todoc.viewmodel.TestViewModel;
+import com.cleanup.todoc.viewmodel.DataViewModel;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -45,7 +38,8 @@ public class TaskUnitTest {
     Context context;
 
     @InjectMocks
-    private TestViewModel tDVM;
+    private DataViewModel dVM;
+
     Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
     Project p2 = new Project(2L, "Projet Lucidia", 0xFFB4CDBA);
     Project p3 = new Project(3L, "Projet Circus", 0xFFA3CED2);
@@ -55,7 +49,7 @@ public class TaskUnitTest {
         MockitoAnnotations.initMocks(this);
         when(database.taskDao()).thenReturn(taskDao);
         when(database.projectDao()).thenReturn(projectDao);
-        tDVM = new TestViewModel(database);
+        dVM = new DataViewModel(this, re);
     }
 
     /*@Test

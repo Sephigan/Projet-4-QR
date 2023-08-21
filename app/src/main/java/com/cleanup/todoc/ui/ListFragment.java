@@ -29,12 +29,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cleanup.todoc.DI.DI;
 import com.cleanup.todoc.R;
 import com.cleanup.todoc.database.AppDatabase;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.repository.DataRepository;
 import com.cleanup.todoc.viewmodel.DataViewModel;
+import com.cleanup.todoc.viewmodel.DataViewModelFactory;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -69,8 +71,8 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        dataViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication()).create(DataViewModel.class);
-        dataViewModel.init();
+        DI.init(this.getActivity().getApplication());
+        dataViewModel = new ViewModelProvider(this, new DataViewModelFactory(requireActivity().getApplication(), DI.getDataRepo())).get(DataViewModel.class);
     }
 
     @Override

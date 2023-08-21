@@ -18,8 +18,10 @@ public class DataViewModel extends AndroidViewModel {
     private LiveData<List<Task>> listLiveDataTask;
     private LiveData<List<Project>> listLiveDataProject;
 
-    public DataViewModel(DataRepository dataRepo) {
-        //A Faire
+    public DataViewModel(Application application, DataRepository dataRepo) {
+        super(application);
+        dataRepository = dataRepo;
+        init();
     }
 
     public void init(){

@@ -17,20 +17,10 @@ import java.util.List;
 
 
 @Dao
-public interface ProjectDao {
+public abstract class ProjectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertProject(Project project);
-
-    @Update
-    default void update(Project project) {
-
-    }
+    public abstract void insertProject(Project project);
 
     @Query("SELECT * from Project ORDER By id Asc")
-    public LiveData<List<Project>> getProjects();
-
-    @Query("DELETE from Project")
-    default void deleteAll() {
-
-    }
+    public abstract LiveData<List<Project>> getProjects();
 }

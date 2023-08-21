@@ -18,33 +18,28 @@ import java.util.List;
 
 @TypeConverters(Converters.class)
 @Dao
-public class TaskDao {
+public abstract class TaskDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    void insertTask(Task task);
-
-    @Update
-    default void update(Task Task) {
-
-    }
+    public abstract void insertTask(Task task);
 
     @Query("SELECT * from Task ORDER By id Asc")
-    LiveData<List<Task>> getTasks();
+    public abstract LiveData<List<Task>> getTasks();
 
     @Delete(entity = Task.class)
-    void deleteTask(Task task);
+    public abstract void deleteTask(Task task);
 
     @Query("SELECT * FROM Task ORDER BY name ASC")
-    LiveData<List<Task>> orderAlphaAZ();
+    public abstract LiveData<List<Task>> orderAlphaAZ();
 
     @Query("SELECT * FROM Task ORDER BY name DESC")
-    LiveData<List<Task>> orderAlphaZA();
+    public abstract LiveData<List<Task>> orderAlphaZA();
 
     @Query("SELECT * FROM Task ORDER BY creationTimestamp ASC")
-    LiveData<List<Task>> orderCreationAsc();
+    public abstract LiveData<List<Task>> orderCreationAsc();
 
     @Query("SELECT * FROM Task ORDER BY creationTimestamp DESC")
-    LiveData<List<Task>> orderCreationDesc();
+    public abstract LiveData<List<Task>> orderCreationDesc();
 
     @Query("SELECT COUNT(*) FROM Task")
-    int countTasks();
+    abstract int countTasks();
 }
