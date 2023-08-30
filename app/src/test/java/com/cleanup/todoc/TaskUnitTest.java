@@ -4,10 +4,13 @@ import com.cleanup.todoc.database.AppDatabase;
 import com.cleanup.todoc.database.ProjectDao;
 import com.cleanup.todoc.database.TaskDao;
 import com.cleanup.todoc.model.Project;
+import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.repository.DataRepository;
 import com.cleanup.todoc.viewmodel.DataViewModel;
 
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -20,10 +23,16 @@ import static org.mockito.Mockito.*;
 
 import android.content.Context;
 
+import androidx.room.Room;
+import androidx.test.core.app.ApplicationProvider;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+
 
 /**
  * Unit tests for tasks
- *
  * @author Gaëtan HERFRAY
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -35,8 +44,6 @@ public class TaskUnitTest {
     private TaskDao taskDao;
     @Mock
     private ProjectDao projectDao;
-    @Mock
-    Context context;
     @InjectMocks
     private DataViewModel dVM;
     @InjectMocks
@@ -49,17 +56,22 @@ public class TaskUnitTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        when(database.taskDao()).thenReturn(taskDao);
-        when(database.projectDao()).thenReturn(projectDao);
+        database = Room.inMemoryDatabaseBuilder(
+                        ApplicationProvider.getApplicationContext(),
+                        AppDatabase.class)
+                .allowMainThreadQueries()
+                .build();
+        taskDao = database.taskDao();
+        projectDao = database.projectDao();
         dataRepo = new DataRepository(taskDao,projectDao);
-        dVM = new DataViewModel(this, dataRepo);
+        dVM = new DataViewModel(dataRepo);
     }
 
-    /*@Test
+    @Test
     public void testAddTask() {
         doNothing().when(taskDao).insertTask(any(Task.class));
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
-        tDVM.insertTask(testTask);
+        dVM.insertTask(testTask);
         verify(taskDao, times(1)).insertTask(eq(testTask));
     }
 
@@ -79,14 +91,14 @@ public class TaskUnitTest {
         doNothing().when(taskDao).deleteTask(any(Task.class));
 
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
-        tDVM.insertTask(testTask);
+        dVM.insertTask(testTask);
         Thread.sleep(100);
-        tDVM.deleteTask(testTask);
+        dVM.deleteTask(testTask);
         Thread.sleep(100);
         verify(taskDao, times(1)).deleteTask(eq(testTask));
     }
 
-    /*@Test
+    @Test
     public void filter_Task(){
         doNothing().when(taskDao).orderAlphaAZ();
         doNothing().when(taskDao).orderAlphaZA();
@@ -94,12 +106,12 @@ public class TaskUnitTest {
         doNothing().when(taskDao).orderCreationDesc();
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
         Task testTask2 = new Task(2, p2, "Test add2", new Date().getTime());
-        taskRepository.insertTask(testTask);
-        taskRepository.insertTask(testTask2);
-        taskRepository.orderAlphaAZ();
-        taskRepository.orderAlphaZA();
-        taskRepository.orderCreationAsc();
-        taskRepository.orderCreationDesc();
+        dVM.insertTask(testTask);
+        dVM.insertTask(testTask2);
+        dVM.orderAlphaAZ();
+        dVM.orderAlphaZA();
+        dVM.orderCreationAsc();
+        dVM.orderCreationDesc();
         verify(taskDao, times(1)).orderAlphaAZ();
         verify(taskDao, times(1)).orderAlphaZA();
         verify(taskDao, times(1)).orderCreationAsc();
@@ -172,5 +184,10 @@ public class TaskUnitTest {
         assertSame(tasks.get(0), task1);
         assertSame(tasks.get(1), task2);
         assertSame(tasks.get(2), task3);
-    }*/
+    }
+
+    @After
+    public void closeDatabase() {
+        database.close();
+    }
 }

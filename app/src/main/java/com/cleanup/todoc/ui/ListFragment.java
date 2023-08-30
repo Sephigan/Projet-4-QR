@@ -60,6 +60,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     @NonNull
     private RecyclerView listTasks;
     private DataViewModel dataViewModel;
+    private static DataViewModelFactory factory;
     private TasksAdapter dataAdapter;
     private List<Task> tmpList;
 
@@ -72,7 +73,8 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         DI.init(this.getActivity().getApplication());
-        dataViewModel = new ViewModelProvider(this, new DataViewModelFactory(requireActivity().getApplication(), DI.getDataRepo())).get(DataViewModel.class);
+        factory = new DataViewModelFactory(DI.getDataRepo());
+        dataViewModel = new ViewModelProvider(this, factory).get(DataViewModel.class);
     }
 
     @Override

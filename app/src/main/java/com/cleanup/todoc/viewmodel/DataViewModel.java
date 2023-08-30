@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
@@ -13,7 +14,7 @@ import com.cleanup.todoc.repository.DataRepository;
 
 import java.util.List;
 
-public class DataViewModel{
+public class DataViewModel extends ViewModel {
     private DataRepository dataRepository;
     private LiveData<List<Task>> listLiveDataTask;
     private LiveData<List<Project>> listLiveDataProject;
