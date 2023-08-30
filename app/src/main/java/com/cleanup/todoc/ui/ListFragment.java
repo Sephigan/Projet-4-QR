@@ -75,6 +75,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         DI.init(this.getActivity().getApplication());
         factory = new DataViewModelFactory(DI.getDataRepo());
         dataViewModel = new ViewModelProvider(this, factory).get(DataViewModel.class);
+        dataViewModel.init();
     }
 
     @Override

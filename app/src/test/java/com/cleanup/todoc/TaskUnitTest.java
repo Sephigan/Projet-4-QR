@@ -1,6 +1,5 @@
 package com.cleanup.todoc;
 
-import com.cleanup.todoc.database.AppDatabase;
 import com.cleanup.todoc.database.ProjectDao;
 import com.cleanup.todoc.database.TaskDao;
 import com.cleanup.todoc.model.Project;
@@ -8,7 +7,6 @@ import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.repository.DataRepository;
 import com.cleanup.todoc.viewmodel.DataViewModel;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,25 +19,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 
-import android.content.Context;
-
-import androidx.room.Room;
-import androidx.test.core.app.ApplicationProvider;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
-
-/**
- * Unit tests for tasks
- * @author Gaëtan HERFRAY
- */
 @RunWith(MockitoJUnitRunner.class)
 public class TaskUnitTest {
-
-    @Mock
-    private AppDatabase database;
     @Mock
     private TaskDao taskDao;
     @Mock
@@ -56,13 +41,8 @@ public class TaskUnitTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        database = Room.inMemoryDatabaseBuilder(
-                        ApplicationProvider.getApplicationContext(),
-                        AppDatabase.class)
-                .allowMainThreadQueries()
-                .build();
-        taskDao = database.taskDao();
-        projectDao = database.projectDao();
+        taskDao = mock(TaskDao.class);
+        projectDao = mock(ProjectDao.class);
         dataRepo = new DataRepository(taskDao,projectDao);
         dVM = new DataViewModel(dataRepo);
     }
@@ -89,7 +69,6 @@ public class TaskUnitTest {
     @Test
     public void supp_Task() throws InterruptedException {
         doNothing().when(taskDao).deleteTask(any(Task.class));
-
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
         dVM.insertTask(testTask);
         Thread.sleep(100);
@@ -100,10 +79,6 @@ public class TaskUnitTest {
 
     @Test
     public void filter_Task(){
-        doNothing().when(taskDao).orderAlphaAZ();
-        doNothing().when(taskDao).orderAlphaZA();
-        doNothing().when(taskDao).orderCreationAsc();
-        doNothing().when(taskDao).orderCreationDesc();
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
         Task testTask2 = new Task(2, p2, "Test add2", new Date().getTime());
         dVM.insertTask(testTask);
@@ -184,10 +159,5 @@ public class TaskUnitTest {
         assertSame(tasks.get(0), task1);
         assertSame(tasks.get(1), task2);
         assertSame(tasks.get(2), task3);
-    }
-
-    @After
-    public void closeDatabase() {
-        database.close();
     }
 }

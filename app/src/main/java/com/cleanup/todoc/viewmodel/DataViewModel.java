@@ -21,7 +21,6 @@ public class DataViewModel extends ViewModel {
 
     public DataViewModel(DataRepository dataRepo) {
         dataRepository = dataRepo;
-        init();
     }
 
     public void init(){
