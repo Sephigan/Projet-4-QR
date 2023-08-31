@@ -1,5 +1,6 @@
 package com.cleanup.todoc;
 
+import com.cleanup.todoc.database.AppDatabase;
 import com.cleanup.todoc.database.ProjectDao;
 import com.cleanup.todoc.database.TaskDao;
 import com.cleanup.todoc.model.Project;
@@ -7,6 +8,7 @@ import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.repository.DataRepository;
 import com.cleanup.todoc.viewmodel.DataViewModel;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,12 +21,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.room.Room;
+import androidx.test.core.app.ApplicationProvider;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TaskUnitTest {
+    @Mock
+    private AppDatabase database;
     @Mock
     private TaskDao taskDao;
     @Mock
@@ -46,6 +57,11 @@ public class TaskUnitTest {
         dataRepo = new DataRepository(taskDao,projectDao);
         dVM = new DataViewModel(dataRepo);
     }
+
+    /*
+    * TESTS DATA VIEW MODEL
+    * ----------------------------------------------------------------------------------
+     */
 
     @Test
     public void testAddTask() {
@@ -87,11 +103,50 @@ public class TaskUnitTest {
         dVM.orderAlphaZA();
         dVM.orderCreationAsc();
         dVM.orderCreationDesc();
-        verify(taskDao, times(1)).orderAlphaAZ();
+        verify(dataRepo, times(1)).orderAlphaAZ();
         verify(taskDao, times(1)).orderAlphaZA();
         verify(taskDao, times(1)).orderCreationAsc();
         verify(taskDao, times(1)).orderCreationDesc();
     }
+
+    /*
+     * ----------------------------------------------------------------------------------
+     */
+
+    /*
+     * TESTS REPOSITORY
+     * ----------------------------------------------------------------------------------
+     */
+
+    @Test
+    public void insertTask_Repo(){
+        doNothing().when(taskDao).insertTask(any(Task.class));
+        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        dataRepo.insertTask(testTask);
+        verify(taskDao, times(1)).insertTask(eq(testTask));
+    }
+
+    @Test
+    public void getTasks_Repo(){
+        doNothing().when(taskDao).insertTask(any(Task.class));
+        dataRepo.getAllTasks();
+        verify(taskDao, times(1)).getTasks();
+    }
+
+    @Test
+    public void deleteTask_Repo() throws InterruptedException {
+        doNothing().when(taskDao).deleteTask(any(Task.class));
+        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        dataRepo.insertTask(testTask);
+        Thread.sleep(100);
+        dataRepo.deleteTask(testTask);
+        Thread.sleep(100);
+        verify(taskDao, times(1)).deleteTask(eq(testTask));
+    }
+
+    /*
+     * ----------------------------------------------------------------------------------
+     */
 
     @Test
     public void test_az_comparator() {
@@ -159,5 +214,10 @@ public class TaskUnitTest {
         assertSame(tasks.get(0), task1);
         assertSame(tasks.get(1), task2);
         assertSame(tasks.get(2), task3);
+    }
+
+    @After
+    public void closeDataBase(){
+        database.close();
     }
 }
