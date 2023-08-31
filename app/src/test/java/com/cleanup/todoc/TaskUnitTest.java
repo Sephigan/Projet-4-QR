@@ -64,10 +64,12 @@ public class TaskUnitTest {
      */
 
     @Test
-    public void testAddTask() {
+    public void testAddTask() throws InterruptedException {
         doNothing().when(taskDao).insertTask(any(Task.class));
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        Thread.sleep(100);
         dVM.insertTask(testTask);
+        Thread.sleep(100);
         verify(taskDao, times(1)).insertTask(eq(testTask));
     }
 
@@ -103,7 +105,7 @@ public class TaskUnitTest {
         dVM.orderAlphaZA();
         dVM.orderCreationAsc();
         dVM.orderCreationDesc();
-        verify(dataRepo, times(1)).orderAlphaAZ();
+        verify(taskDao, times(1)).orderAlphaAZ();
         verify(taskDao, times(1)).orderAlphaZA();
         verify(taskDao, times(1)).orderCreationAsc();
         verify(taskDao, times(1)).orderCreationDesc();
@@ -128,7 +130,6 @@ public class TaskUnitTest {
 
     @Test
     public void getTasks_Repo(){
-        doNothing().when(taskDao).insertTask(any(Task.class));
         dataRepo.getAllTasks();
         verify(taskDao, times(1)).getTasks();
     }
@@ -142,6 +143,21 @@ public class TaskUnitTest {
         dataRepo.deleteTask(testTask);
         Thread.sleep(100);
         verify(taskDao, times(1)).deleteTask(eq(testTask));
+    }
+    @Test
+    public void filter_Task_Repo(){
+        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        Task testTask2 = new Task(2, p2, "Test add2", new Date().getTime());
+        dataRepo.insertTask(testTask);
+        dataRepo.insertTask(testTask2);
+        dataRepo.orderAlphaAZ();
+        dataRepo.orderAlphaZA();
+        dataRepo.orderCreationAsc();
+        dataRepo.orderCreationDesc();
+        verify(taskDao, times(1)).orderAlphaAZ();
+        verify(taskDao, times(1)).orderAlphaZA();
+        verify(taskDao, times(1)).orderCreationAsc();
+        verify(taskDao, times(1)).orderCreationDesc();
     }
 
     /*
