@@ -14,11 +14,9 @@ import com.cleanup.todoc.model.Task;
 import java.util.List;
 
 public class DataRepository {
-    AppDatabase appDatabase;
     TaskDao myTaskDao;
     ProjectDao myProjectDao;
 
-    private LiveData<List<Project>> listProjects;
     private LiveData<List<Task>> listTasks;
 
     public DataRepository(TaskDao taskDao, ProjectDao projectDao) {
