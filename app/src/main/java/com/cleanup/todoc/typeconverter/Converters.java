@@ -8,9 +8,9 @@ import com.cleanup.todoc.model.Project;
 
 public class Converters {
     @TypeConverter
-    public static Long fromProject(Project project) {
+    public static long fromProject(Project project) {
         if (project==null) {
-            return(null);
+            return(0);
         }
         return(project.getId());
     }
