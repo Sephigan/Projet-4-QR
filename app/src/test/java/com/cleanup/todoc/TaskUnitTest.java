@@ -97,10 +97,6 @@ public class TaskUnitTest {
 
     @Test
     public void filter_Task(){
-        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
-        Task testTask2 = new Task(2, p2, "Test add2", new Date().getTime());
-        dVM.insertTask(testTask);
-        dVM.insertTask(testTask2);
         dVM.orderAlphaAZ();
         dVM.orderAlphaZA();
         dVM.orderCreationAsc();
@@ -146,10 +142,6 @@ public class TaskUnitTest {
     }
     @Test
     public void filter_Task_Repo(){
-        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
-        Task testTask2 = new Task(2, p2, "Test add2", new Date().getTime());
-        dataRepo.insertTask(testTask);
-        dataRepo.insertTask(testTask2);
         dataRepo.orderAlphaAZ();
         dataRepo.orderAlphaZA();
         dataRepo.orderCreationAsc();
