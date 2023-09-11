@@ -17,21 +17,15 @@ import com.cleanup.todoc.typeconverter.Converters;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- * Code à étudier, pas encore compris.
- */
 @Database(entities = {Task.class, Project.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
     public abstract ProjectDao projectDao();
-
     private static volatile AppDatabase appDatabase;
     private static final int NUMBER_OF_THREADS = 4;
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
-
-    private TaskDao customTaskDao; // Added member variable
 
     public static AppDatabase getDatabase(final Context context) {
         if (appDatabase == null) {
@@ -43,10 +37,5 @@ public abstract class AppDatabase extends RoomDatabase {
             }
         }
         return appDatabase;
-    }
-
-    // This method allows you to set a custom TaskDao for testing purposes
-    public void setTaskDao(TaskDao taskDao) {
-        customTaskDao = taskDao;
     }
 }

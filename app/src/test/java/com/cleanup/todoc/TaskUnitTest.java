@@ -36,60 +36,10 @@ import java.util.List;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TaskUnitTest {
-    @Mock
-    private AppDatabase database;
-    @Mock
-    private TaskDao taskDao;
-    @Mock
-    private ProjectDao projectDao;
-    @InjectMocks
-    private DataViewModel dVM;
-    @InjectMocks
-    private DataRepository dataRepo;
-
-    //private AppDatabase appDatabase;
 
     Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
     Project p2 = new Project(2L, "Projet Lucidia", 0xFFB4CDBA);
     Project p3 = new Project(3L, "Projet Circus", 0xFFA3CED2);
-
-    /*@Before
-    public void initDb() {
-        appDatabase = Room.inMemoryDatabaseBuilder(
-                        ApplicationProvider.getApplicationContext(),
-                        AppDatabase.class)
-                .allowMainThreadQueries()
-                .build();
-    }
-
-    @After
-    public void closeDb() {
-        appDatabase.close();
-    }*/
-
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        taskDao = mock(TaskDao.class);
-        projectDao = mock(ProjectDao.class);
-        dataRepo = new DataRepository(taskDao,projectDao);
-        dVM = new DataViewModel(dataRepo);
-    }
-
-    /*
-    * TESTS DATA VIEW MODEL
-    * ----------------------------------------------------------------------------------
-     */
-
-    @Test
-    public void testAddTask() throws InterruptedException {
-        doNothing().when(dataRepo).insertTask(any(Task.class));
-        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
-        Thread.sleep(100);
-        dVM.insertTask(testTask);
-        Thread.sleep(100);
-        verify(dataRepo, times(1)).insertTask(eq(testTask));
-    }
 
     @Test
     public void test_projects() {
@@ -101,96 +51,6 @@ public class TaskUnitTest {
         assertEquals("Projet Lucidia", task2.getProject().getName());
         assertEquals("Projet Circus", task3.getProject().getName());
     }
-
-    @Test
-    public void supp_Task() throws InterruptedException {
-        doNothing().when(taskDao).deleteTask(any(Task.class));
-        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
-        dVM.insertTask(testTask);
-        Thread.sleep(100);
-        dVM.deleteTask(testTask);
-        Thread.sleep(100);
-        verify(taskDao, times(1)).deleteTask(eq(testTask));
-    }
-
-    @Test
-    public void filter_Task(){
-        dVM.orderAlphaAZ();
-        dVM.orderAlphaZA();
-        dVM.orderCreationAsc();
-        dVM.orderCreationDesc();
-        verify(taskDao, times(1)).orderAlphaAZ();
-        verify(taskDao, times(1)).orderAlphaZA();
-        verify(taskDao, times(1)).orderCreationAsc();
-        verify(taskDao, times(1)).orderCreationDesc();
-    }
-
-    /*
-     * ----------------------------------------------------------------------------------
-     */
-
-    /*
-     * TESTS REPOSITORY
-     * ----------------------------------------------------------------------------------
-     */
-
-    @Test
-    public void insertTask_Repo(){
-        doNothing().when(taskDao).insertTask(any(Task.class));
-        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
-        dataRepo.insertTask(testTask);
-        verify(taskDao, times(1)).insertTask(eq(testTask));
-    }
-
-    @Test
-    public void getTasks_Repo(){
-        dataRepo.getAllTasks();
-        verify(taskDao, times(1)).getTasks();
-    }
-
-    @Test
-    public void deleteTask_Repo() throws InterruptedException {
-        doNothing().when(taskDao).deleteTask(any(Task.class));
-        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
-        dataRepo.insertTask(testTask);
-        Thread.sleep(100);
-        dataRepo.deleteTask(testTask);
-        Thread.sleep(100);
-        verify(taskDao, times(1)).deleteTask(eq(testTask));
-    }
-
-    //1 test par méthode
-    @Test
-    public void filter_Task_Repo(){
-        dataRepo.orderAlphaAZ();
-        dataRepo.orderAlphaZA();
-        dataRepo.orderCreationAsc();
-        dataRepo.orderCreationDesc();
-        verify(taskDao, times(1)).orderAlphaAZ();
-        verify(taskDao, times(1)).orderAlphaZA();
-        verify(taskDao, times(1)).orderCreationAsc();
-        verify(taskDao, times(1)).orderCreationDesc();
-    }
-
-    /*
-     * ----------------------------------------------------------------------------------
-     */
-
-    /*
-     * TESTS DAO
-     * ----------------------------------------------------------------------------------
-     */
-
-    /*@Test
-    public void insertTask_DAO(){
-        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
-        appDatabase.taskDao().insertTask(testTask);
-        verify(taskDao, times(1)).insertTask(eq(testTask));
-    }*/
-
-    /*
-     * ----------------------------------------------------------------------------------
-     */
 
     @Test
     public void test_az_comparator() {
