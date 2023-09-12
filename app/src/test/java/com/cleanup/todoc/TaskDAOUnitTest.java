@@ -13,14 +13,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.mockito.InjectMocks;
+import org.mockito.MockedStatic;
 
 import java.util.Date;
 
 import static org.mockito.Mockito.*;
 
+import android.util.Log;
+
 @RunWith(AndroidJUnit4.class)
 public class TaskDAOUnitTest {
-
     private TaskDao taskDao;
     private AppDatabase appDatabase;
 
@@ -37,7 +41,7 @@ public class TaskDAOUnitTest {
     }
 
     @After
-    public void closeDb() {
+    public void closeDb(){
         appDatabase.close();
     }
 
