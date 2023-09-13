@@ -2,7 +2,6 @@ package com.cleanup.todoc;
 
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.runner.AndroidJUnit4;
 
 import com.cleanup.todoc.database.AppDatabase;
 import com.cleanup.todoc.database.TaskDao;
@@ -13,17 +12,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.mockito.InjectMocks;
-import org.mockito.MockedStatic;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import java.util.Date;
 
 import static org.mockito.Mockito.*;
 
-import android.util.Log;
-
-@RunWith(AndroidJUnit4.class)
+@Config(manifest= Config.NONE)
+@RunWith(RobolectricTestRunner.class)
 public class TaskDAOUnitTest {
     private TaskDao taskDao;
     private AppDatabase appDatabase;
@@ -50,5 +47,11 @@ public class TaskDAOUnitTest {
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
         taskDao.insertTask(testTask);
         verify(taskDao, times(1)).insertTask(eq(testTask));
+    }
+
+    @Test
+    public void getTask_DAO(){
+        taskDao.getTasks();
+        verify(taskDao, times(1)).getTasks();
     }
 }
