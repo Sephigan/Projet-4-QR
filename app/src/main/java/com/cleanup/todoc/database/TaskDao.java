@@ -35,7 +35,4 @@ public abstract class TaskDao {
 
     @Query("SELECT * FROM Task ORDER BY creationTimestamp DESC")
     public abstract LiveData<List<Task>> orderCreationDesc();
-
-    @Query("SELECT COUNT(*) FROM Task")
-    abstract int countTasks();
 }

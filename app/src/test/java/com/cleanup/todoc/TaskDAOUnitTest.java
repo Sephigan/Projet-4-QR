@@ -54,4 +54,36 @@ public class TaskDAOUnitTest {
         taskDao.getTasks();
         verify(taskDao, times(1)).getTasks();
     }
+
+    @Test
+    public void deleteTask_DAO(){
+        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        taskDao.insertTask(testTask);
+        taskDao.deleteTask(testTask);
+        verify(taskDao, times(1)).deleteTask(eq(testTask));
+    }
+
+    @Test
+    public void orderAZ_DAO(){
+        taskDao.orderAlphaAZ();
+        verify(taskDao, times(1)).orderAlphaAZ();
+    }
+
+    @Test
+    public void orderZA_DAO(){
+        taskDao.orderAlphaZA();
+        verify(taskDao, times(1)).orderAlphaZA();
+    }
+
+    @Test
+    public void orderCreationAsc_DAO(){
+        taskDao.orderCreationAsc();
+        verify(taskDao, times(1)).orderCreationAsc();
+    }
+
+    @Test
+    public void orderCreationDesc_DAO(){
+        taskDao.orderCreationDesc();
+        verify(taskDao, times(1)).orderCreationDesc();
+    }
 }
