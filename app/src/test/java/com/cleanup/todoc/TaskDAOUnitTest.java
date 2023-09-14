@@ -1,5 +1,7 @@
 package com.cleanup.todoc;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -16,7 +18,12 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @Config(manifest= Config.NONE)
@@ -34,7 +41,8 @@ public class TaskDAOUnitTest {
                         AppDatabase.class)
                 .allowMainThreadQueries()
                 .build();
-        taskDao = mock(TaskDao.class);
+        taskDao = appDatabase.taskDao();
+        appDatabase.projectDao().insertProject(p1);
     }
 
     @After
@@ -43,47 +51,93 @@ public class TaskDAOUnitTest {
     }
 
     @Test
-    public void insertTask_DAO(){
+    public void insertTask_DAO() throws InterruptedException {
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
         taskDao.insertTask(testTask);
-        verify(taskDao, times(1)).insertTask(eq(testTask));
+        LiveData<List<Task>> tasksLiveData = taskDao.getTasks();
+        Observer<List<Task>> observer = tasks -> {
+            assertEquals(1, tasks.size());
+            assertEquals(testTask, tasks.get(0));
+        };
     }
 
     @Test
     public void getTask_DAO(){
-        taskDao.getTasks();
-        verify(taskDao, times(1)).getTasks();
+        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        taskDao.insertTask(testTask);
+        LiveData<List<Task>> tasksLiveData = taskDao.getTasks();
+        Observer<List<Task>> observer = tasks -> {
+            assertEquals(1, tasks.size());
+        };
     }
 
     @Test
     public void deleteTask_DAO(){
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
         taskDao.insertTask(testTask);
+        LiveData<List<Task>> tasksLiveData = taskDao.getTasks();
+        Observer<List<Task>> observer = tasks -> {
+            assertEquals(1, tasks.size());
+        };
         taskDao.deleteTask(testTask);
-        verify(taskDao, times(1)).deleteTask(eq(testTask));
+        Observer<List<Task>> observer2 = tasks -> {
+            assertEquals(0, tasks.size());
+        };
     }
 
     @Test
     public void orderAZ_DAO(){
-        taskDao.orderAlphaAZ();
-        verify(taskDao, times(1)).orderAlphaAZ();
+        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        Task testTask2 = new Task(1, p1, "Add test", new Date().getTime());
+        taskDao.insertTask(testTask);
+        taskDao.insertTask(testTask2);
+        LiveData<List<Task>> tasksLiveData = taskDao.orderAlphaAZ();
+        Observer<List<Task>> observer = tasks -> {
+            assertEquals(2, tasks.size());
+            assertEquals(testTask2, tasks.get(0));
+            assertEquals(testTask, tasks.get(1));
+        };
     }
 
     @Test
     public void orderZA_DAO(){
-        taskDao.orderAlphaZA();
-        verify(taskDao, times(1)).orderAlphaZA();
+        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        Task testTask2 = new Task(1, p1, "Add test", new Date().getTime());
+        taskDao.insertTask(testTask2);
+        taskDao.insertTask(testTask);
+        LiveData<List<Task>> tasksLiveData = taskDao.orderAlphaZA();
+        Observer<List<Task>> observer = tasks -> {
+            assertEquals(2, tasks.size());
+            assertEquals(testTask2, tasks.get(0));
+            assertEquals(testTask, tasks.get(1));
+        };
     }
 
     @Test
     public void orderCreationAsc_DAO(){
-        taskDao.orderCreationAsc();
-        verify(taskDao, times(1)).orderCreationAsc();
+        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        Task testTask2 = new Task(1, p1, "Add test", new Date().getTime());
+        taskDao.insertTask(testTask);
+        taskDao.insertTask(testTask2);
+        LiveData<List<Task>> tasksLiveData = taskDao.orderCreationAsc();
+        Observer<List<Task>> observer = tasks -> {
+            assertEquals(2, tasks.size());
+            assertEquals(testTask2, tasks.get(0));
+            assertEquals(testTask, tasks.get(1));
+        };
     }
 
     @Test
     public void orderCreationDesc_DAO(){
-        taskDao.orderCreationDesc();
-        verify(taskDao, times(1)).orderCreationDesc();
+        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        Task testTask2 = new Task(1, p1, "Add test", new Date().getTime());
+        taskDao.insertTask(testTask);
+        taskDao.insertTask(testTask2);
+        LiveData<List<Task>> tasksLiveData = taskDao.orderCreationDesc();
+        Observer<List<Task>> observer = tasks -> {
+            assertEquals(2, tasks.size());
+            assertEquals(testTask, tasks.get(0));
+            assertEquals(testTask2, tasks.get(1));
+        };
     }
 }
