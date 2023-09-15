@@ -8,25 +8,20 @@ import java.util.concurrent.TimeUnit;
 
 public class LiveDataTestUtil {
 
-    public static <T> T getValue(LiveData<T> liveData) throws InterruptedException {
+    public static <T> T getOrAwaitValue(final LiveData<T> liveData) throws InterruptedException {
         final Object[] data = new Object[1];
         CountDownLatch latch = new CountDownLatch(1);
 
-        Observer<T> observer = new Observer<T>() {
+        liveData.observeForever(new Observer<T>() {
             @Override
             public void onChanged(T t) {
                 data[0] = t;
                 latch.countDown();
                 liveData.removeObserver(this);
             }
-        };
+        });
 
-        liveData.observeForever(observer);
-
-        // Don't wait indefinitely in case the LiveData never emits a value
-        if (!latch.await(2, TimeUnit.SECONDS)) {
-            throw new RuntimeException("LiveData value was never set");
-        }
+        latch.await(2, TimeUnit.SECONDS);
 
         //noinspection unchecked
         return (T) data[0];

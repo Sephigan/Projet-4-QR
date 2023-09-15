@@ -1,7 +1,6 @@
 package com.cleanup.todoc;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -19,14 +18,12 @@ import org.robolectric.annotation.Config;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import com.cleanup.todoc.LiveDataTestUtil;
+
 
 @Config(manifest= Config.NONE)
 @RunWith(RobolectricTestRunner.class)
@@ -59,7 +56,7 @@ public class TaskDAOUnitTest {
         LiveData<List<Task>> tasksLiveData = taskDao.getTasks();
 
         // Use LiveDataTestUtil to observe LiveData
-        List<Task> tasks = TestUtils.getOrAwaitValue(tasksLiveData);
+        List<Task> tasks = LiveDataTestUtil.getOrAwaitValue(tasksLiveData);
 
         assertNotNull(tasks);
         assertEquals(1, tasks.size());
