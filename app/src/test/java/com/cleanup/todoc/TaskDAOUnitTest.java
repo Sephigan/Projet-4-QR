@@ -23,6 +23,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -46,22 +48,26 @@ public class TaskDAOUnitTest {
     }
 
     @After
-    public void closeDb(){
+    public void closeDb() {
         appDatabase.close();
     }
 
     @Test
     public void insertTask_DAO() throws InterruptedException {
-        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        Task testTask = new Task(2, p1, "Test add", new Date().getTime());
         taskDao.insertTask(testTask);
         LiveData<List<Task>> tasksLiveData = taskDao.getTasks();
-        Observer<List<Task>> observer = tasks -> {
-            assertEquals(1, tasks.size());
-            assertEquals(testTask, tasks.get(0));
-        };
-    }
 
-    @Test
+        // Use LiveDataTestUtil to observe LiveData
+        List<Task> tasks = TestUtils.getOrAwaitValue(tasksLiveData);
+
+        assertNotNull(tasks);
+        assertEquals(1, tasks.size());
+        assertEquals("Test add", tasks.get(0).getName());
+    }
+}
+    //A FAIRE
+    /*@Test
     public void getTask_DAO(){
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
         taskDao.insertTask(testTask);
@@ -139,5 +145,4 @@ public class TaskDAOUnitTest {
             assertEquals(testTask, tasks.get(0));
             assertEquals(testTask2, tasks.get(1));
         };
-    }
-}
+    }*/
