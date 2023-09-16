@@ -2,6 +2,7 @@ package com.cleanup.todoc.typeconverter;
 
 import static com.cleanup.todoc.model.Project.getAllProjects;
 
+import androidx.room.ProvidedTypeConverter;
 import androidx.room.TypeConverter;
 
 import com.cleanup.todoc.model.Project;

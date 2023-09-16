@@ -38,4 +38,16 @@ public abstract class AppDatabase extends RoomDatabase {
         }
         return appDatabase;
     }
+    public static AppDatabase getTestDatabase(final Context context) {
+        if (appDatabase == null) {
+            synchronized (AppDatabase.class) {
+                if (appDatabase == null) {
+                    appDatabase = Room.inMemoryDatabaseBuilder(context.getApplicationContext(),
+                                    AppDatabase.class)
+                            .build();
+                }
+            }
+        }
+        return appDatabase;
+    }
 }
