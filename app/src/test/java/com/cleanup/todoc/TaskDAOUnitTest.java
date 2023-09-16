@@ -1,11 +1,13 @@
 package com.cleanup.todoc;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.runner.AndroidJUnit4;
 
 import com.cleanup.todoc.database.AppDatabase;
+import com.cleanup.todoc.database.ProjectDao;
 import com.cleanup.todoc.database.TaskDao;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
@@ -33,8 +35,8 @@ import android.util.Log;
 
 @RunWith(AndroidJUnit4.class)
 public class TaskDAOUnitTest {
-    @InjectMocks
     private TaskDao taskDao;
+    private ProjectDao projectDao;
     private AppDatabase appDatabase;
 
     Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
@@ -43,13 +45,11 @@ public class TaskDAOUnitTest {
     public void initDb() {
         Context context = ApplicationProvider.getApplicationContext();
         appDatabase = AppDatabase.getTestDatabase(context);
-        if (appDatabase == null) {
-            throw new IllegalStateException("appDatabase is null");
-        }
         appDatabase.getTypeConverter(Converters.class);
         taskDao = appDatabase.taskDao();
+        projectDao = appDatabase.projectDao();
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            appDatabase.projectDao().insertProject(p1);
+            projectDao.insertProject(p1);
         });
     }
 
@@ -64,17 +64,13 @@ public class TaskDAOUnitTest {
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
 
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            long taskId = taskDao.insertTask(testTask);
-            Log.d("TaskDAOUnitTest", "Inserted task with ID: " + taskId);
-            latch.countDown();
+            taskDao.insertTask(testTask);
+            latch.countDown(); // Signal that the operation is complete
         });
 
-        latch.await();
+        latch.await(); // Wait for the operation to complete
 
         LiveData<List<Task>> tasksLiveData = taskDao.getTasks();
-        if (tasksLiveData == null) {
-            throw new IllegalStateException("tasksLiveData is null");
-        }
         List<Task> tasks = tasksLiveData.getValue();
 
         assertNotNull(tasks);
@@ -82,7 +78,7 @@ public class TaskDAOUnitTest {
         assertEquals("Test add", tasks.get(0).getName());
     }
 }
-    //A FAIRE
+//A FAIRE
     /*@Test
     public void getTask_DAO(){
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
