@@ -37,6 +37,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.verify;
 
+import static java.lang.Thread.sleep;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -48,11 +50,6 @@ public class TaskDAOUnitTest {
     private AppDatabase appDatabase;
     Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
     List<Task> listTask = new ArrayList<>();
-    //@Rule
-    //public TestRule rule = new InstantTaskExecutorRule();
-    @Mock
-    private Observer<List<Task>> observer;
-
 
     @Before
     public void initDb() {
@@ -76,8 +73,6 @@ public class TaskDAOUnitTest {
         CountDownLatch latch = new CountDownLatch(1);
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
 
-        taskDao.getTasks().observeForever(observer);
-
         AppDatabase.databaseWriteExecutor.execute(() -> {
             taskDao.insertTask(testTask);
             latch.countDown();
@@ -85,19 +80,17 @@ public class TaskDAOUnitTest {
 
         latch.await();
 
-        verify(observer).onChanged(Collections.singletonList(testTask));
-
-        /*Observer<List<Task>> observer = new Observer<List<Task>>() {
+        Observer<List<Task>> observer = new Observer<List<Task>>() {
             @Override
             public void onChanged(@Nullable List<Task> tasks) {
                 listTask = tasks;
             }
         };
         taskDao.getTasks().observeForever(observer);
-        assertNotNull(listTask);
-        assertEquals(1, listTask.size());
-        assertEquals("Test add", listTask.get(0).getName());
-        taskDao.getTasks().removeObserver(observer);*/
+        assertNotNull(taskDao.getTasks());
+        assertEquals(1, taskDao.getTasks().getValue().size());
+        assertEquals("Test add", taskDao.getTasks().getValue().get(0).getName());
+        taskDao.getTasks().removeObserver(observer);
     }
 
     /*@Test
