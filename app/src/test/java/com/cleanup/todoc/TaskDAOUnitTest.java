@@ -1,7 +1,6 @@
 package com.cleanup.todoc;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.runner.AndroidJUnit4;
@@ -17,9 +16,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 import java.util.Date;
 import java.util.List;
@@ -30,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import android.content.Context;
-import android.util.Log;
+
 
 
 @RunWith(AndroidJUnit4.class)
@@ -65,10 +61,10 @@ public class TaskDAOUnitTest {
 
         AppDatabase.databaseWriteExecutor.execute(() -> {
             taskDao.insertTask(testTask);
-            latch.countDown(); // Signal that the operation is complete
+            latch.countDown();
         });
 
-        latch.await(); // Wait for the operation to complete
+        latch.await();
 
         LiveData<List<Task>> tasksLiveData = taskDao.getTasks();
         List<Task> tasks = tasksLiveData.getValue();
@@ -77,84 +73,112 @@ public class TaskDAOUnitTest {
         assertEquals(1, tasks.size());
         assertEquals("Test add", tasks.get(0).getName());
     }
-}
-//A FAIRE
-    /*@Test
-    public void getTask_DAO(){
+
+    @Test
+    public void getTask_DAO() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
-        taskDao.insertTask(testTask);
-        LiveData<List<Task>> tasksLiveData = taskDao.getTasks();
-        Observer<List<Task>> observer = tasks -> {
-            assertEquals(1, tasks.size());
-        };
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            taskDao.insertTask(testTask);
+            latch.countDown();
+        });
+
+        latch.await();
+        assertEquals(testTask, taskDao.getTasks().getValue().get(0));
     }
 
     @Test
-    public void deleteTask_DAO(){
+    public void deleteTask_DAO() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
-        taskDao.insertTask(testTask);
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            taskDao.insertTask(testTask);
+            latch.countDown();
+        });
+        latch.await();
         LiveData<List<Task>> tasksLiveData = taskDao.getTasks();
-        Observer<List<Task>> observer = tasks -> {
-            assertEquals(1, tasks.size());
-        };
-        taskDao.deleteTask(testTask);
-        Observer<List<Task>> observer2 = tasks -> {
-            assertEquals(0, tasks.size());
-        };
+        List<Task> tasks = tasksLiveData.getValue();
+        assertEquals(1, tasks.size());
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            taskDao.deleteTask(testTask);
+            latch.countDown();
+        });
+        latch.await();
+        assertEquals(0, tasks.size());
     }
 
     @Test
-    public void orderAZ_DAO(){
+    public void orderAZ_DAO() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
         Task testTask2 = new Task(1, p1, "Add test", new Date().getTime());
-        taskDao.insertTask(testTask);
-        taskDao.insertTask(testTask2);
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            taskDao.insertTask(testTask);
+            taskDao.insertTask(testTask2);
+            latch.countDown();
+        });
+        latch.await();
         LiveData<List<Task>> tasksLiveData = taskDao.orderAlphaAZ();
-        Observer<List<Task>> observer = tasks -> {
-            assertEquals(2, tasks.size());
-            assertEquals(testTask2, tasks.get(0));
-            assertEquals(testTask, tasks.get(1));
-        };
+        List<Task> tasks = tasksLiveData.getValue();
+        assertNotNull(tasks);
+        assertEquals(testTask, taskDao.getTasks().getValue().get(1));
+        assertEquals(testTask2, taskDao.getTasks().getValue().get(0));
     }
 
     @Test
-    public void orderZA_DAO(){
+    public void orderZA_DAO() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
         Task testTask2 = new Task(1, p1, "Add test", new Date().getTime());
-        taskDao.insertTask(testTask2);
-        taskDao.insertTask(testTask);
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            taskDao.insertTask(testTask);
+            taskDao.insertTask(testTask2);
+            latch.countDown();
+        });
+        latch.await();
         LiveData<List<Task>> tasksLiveData = taskDao.orderAlphaZA();
-        Observer<List<Task>> observer = tasks -> {
-            assertEquals(2, tasks.size());
-            assertEquals(testTask2, tasks.get(0));
-            assertEquals(testTask, tasks.get(1));
-        };
+        List<Task> tasks = tasksLiveData.getValue();
+        assertNotNull(tasks);
+        assertEquals(testTask, taskDao.getTasks().getValue().get(0));
+        assertEquals(testTask2, taskDao.getTasks().getValue().get(1));
     }
 
     @Test
-    public void orderCreationAsc_DAO(){
+    public void orderCreationAsc_DAO() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
         Task testTask2 = new Task(1, p1, "Add test", new Date().getTime());
-        taskDao.insertTask(testTask);
-        taskDao.insertTask(testTask2);
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            taskDao.insertTask(testTask);
+            latch.countDown();
+            taskDao.insertTask(testTask2);
+            latch.countDown();
+        });
+        latch.await();
         LiveData<List<Task>> tasksLiveData = taskDao.orderCreationAsc();
-        Observer<List<Task>> observer = tasks -> {
-            assertEquals(2, tasks.size());
-            assertEquals(testTask2, tasks.get(0));
-            assertEquals(testTask, tasks.get(1));
-        };
+        List<Task> tasks = tasksLiveData.getValue();
+        assertNotNull(tasks);
+        assertEquals(testTask, taskDao.getTasks().getValue().get(0));
+        assertEquals(testTask2, taskDao.getTasks().getValue().get(1));
     }
 
     @Test
-    public void orderCreationDesc_DAO(){
+    public void orderCreationDesc_DAO() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
         Task testTask2 = new Task(1, p1, "Add test", new Date().getTime());
-        taskDao.insertTask(testTask);
-        taskDao.insertTask(testTask2);
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            taskDao.insertTask(testTask);
+            latch.countDown();
+            taskDao.insertTask(testTask2);
+            latch.countDown();
+        });
+        latch.await();
         LiveData<List<Task>> tasksLiveData = taskDao.orderCreationDesc();
-        Observer<List<Task>> observer = tasks -> {
-            assertEquals(2, tasks.size());
-            assertEquals(testTask, tasks.get(0));
-            assertEquals(testTask2, tasks.get(1));
-        };
-    }*/
+        List<Task> tasks = tasksLiveData.getValue();
+        assertNotNull(tasks);
+        assertEquals(testTask, taskDao.getTasks().getValue().get(1));
+        assertEquals(testTask2, taskDao.getTasks().getValue().get(0));
+    }
+}
+
