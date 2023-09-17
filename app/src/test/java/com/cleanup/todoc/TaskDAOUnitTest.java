@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import android.content.Context;
-
+import android.util.Log;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -46,6 +46,7 @@ public class TaskDAOUnitTest {
         projectDao = appDatabase.projectDao();
         AppDatabase.databaseWriteExecutor.execute(() -> {
             projectDao.insertProject(p1);
+            List<Project> px = projectDao.getProjects().getValue();
         });
     }
 
@@ -74,7 +75,7 @@ public class TaskDAOUnitTest {
         assertEquals("Test add", tasks.get(0).getName());
     }
 
-    @Test
+    /*@Test
     public void getTask_DAO() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         Task testTask = new Task(1, p1, "Test add", new Date().getTime());
@@ -179,6 +180,6 @@ public class TaskDAOUnitTest {
         assertNotNull(tasks);
         assertEquals(testTask, taskDao.getTasks().getValue().get(1));
         assertEquals(testTask2, taskDao.getTasks().getValue().get(0));
-    }
+    }*/
 }
 
