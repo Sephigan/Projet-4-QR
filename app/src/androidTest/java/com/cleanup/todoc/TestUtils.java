@@ -26,4 +26,8 @@ public class TestUtils {
         //noinspection unchecked
         return (T) data[0];
     }
+
+    public static RecyclerViewMatcher withRecyclerView(final int recyclerViewId) {
+        return new RecyclerViewMatcher(recyclerViewId);
+    }
 }
