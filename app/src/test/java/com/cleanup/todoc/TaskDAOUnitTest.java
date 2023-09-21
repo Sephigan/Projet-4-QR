@@ -17,6 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -28,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
 import android.content.Context;
 import android.util.Log;
 
-
+@Config(manifest= Config.NONE)
 @RunWith(AndroidJUnit4.class)
 public class TaskDAOUnitTest {
     private TaskDao taskDao;
