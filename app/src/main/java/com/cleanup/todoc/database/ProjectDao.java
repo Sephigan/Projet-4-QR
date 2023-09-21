@@ -19,8 +19,11 @@ import java.util.List;
 @Dao
 public abstract class ProjectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insertProject(Project project);
+    public void insertProject(Project project){
+        Log.e("test", this.toString());
+    }
 
     @Query("SELECT * from Project ORDER By id Asc")
     public abstract LiveData<List<Project>> getProjects();
+
 }

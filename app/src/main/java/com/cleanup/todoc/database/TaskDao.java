@@ -1,5 +1,7 @@
 package com.cleanup.todoc.database;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -16,7 +18,8 @@ import java.util.List;
 @Dao
 public abstract class TaskDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public abstract void insertTask(Task task);
+    public void insertTask(Task task){
+        Log.e("test", "insert");}
 
     @Query("SELECT * from Task ORDER By id Asc")
     public abstract LiveData<List<Task>> getTasks();
