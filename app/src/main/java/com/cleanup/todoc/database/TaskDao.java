@@ -18,8 +18,7 @@ import java.util.List;
 @Dao
 public abstract class TaskDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    public void insertTask(Task task){
-        Log.e("test", "insert");}
+    public abstract void insertTask(Task task);
 
     @Query("SELECT * from Task ORDER By id Asc")
     public abstract LiveData<List<Task>> getTasks();

@@ -2,6 +2,7 @@ package com.cleanup.todoc;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
+import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.runner.AndroidJUnit4;
 
@@ -25,6 +26,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import android.content.Context;
+import android.util.Log;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -40,14 +42,25 @@ public class TaskDAOUnitTest {
     @Before
     public void initDb() {
         Context context = ApplicationProvider.getApplicationContext();
-        appDatabase = AppDatabase.getTestDatabase(context);
+        appDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
         appDatabase.getTypeConverter(Converters.class);
         taskDao = appDatabase.taskDao();
         projectDao = appDatabase.projectDao();
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            projectDao.insertProject(p1);
+        try {
+            AppDatabase.databaseWriteExecutor.execute(() -> {
+                try {
+                    projectDao.insertProject(p1);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        projectDao.getProjects().observeForever(projects -> {
+            pTest = projects;
         });
-
+        Log.e("pTest", pTest.get(0).toString());
     }
 
     @After
