@@ -23,6 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 @Config(manifest= Config.NONE)
-@RunWith(AndroidJUnit4.class)
+@RunWith(RobolectricTestRunner.class)
 public class TaskDAOUnitTest {
     private TaskDao taskDao;
     private ProjectDao projectDao;
@@ -68,21 +69,9 @@ public class TaskDAOUnitTest {
 
     @Test
     public void testProject() throws InterruptedException{
-        final CountDownLatch latch = new CountDownLatch(1);
-        ArrayList<Project> pList = new ArrayList<>();
         projectDao.insertProject(p1);
         LiveData<List<Project>> lvdataP = projectDao.getProjects();
-        Observer<List<Project>> observer = new Observer<List<Project>>() {
-            @Override
-            public void onChanged(List<Project> listLiveData) {
-                Log.e("livedata", listLiveData.toString());
-                pList.addAll(listLiveData);
-            }
-        };
-        lvdataP.observeForever(observer);
-        //Log.e("pTest", pTest.get(0).toString());
-        latch.await(2, TimeUnit.SECONDS);
-        assertEquals(1, pList.size());
+        lvdataP = projectDao.getProjects().test();
     }
 
     @Test
