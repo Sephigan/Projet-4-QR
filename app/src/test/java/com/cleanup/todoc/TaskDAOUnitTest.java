@@ -1,9 +1,15 @@
 package com.cleanup.todoc;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.room.DatabaseConfiguration;
+import androidx.room.InvalidationTracker;
 import androidx.room.Room;
+import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.runner.AndroidJUnit4;
 
 import com.cleanup.todoc.database.AppDatabase;
@@ -22,11 +28,16 @@ import org.robolectric.annotation.Config;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 @Config(manifest= Config.NONE)
@@ -35,33 +46,19 @@ public class TaskDAOUnitTest {
     private TaskDao taskDao;
     private ProjectDao projectDao;
     private AppDatabase appDatabase;
-    Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
-    List<Task> listTask = new ArrayList<>();
-
+    Project p1 = new Project(50, "Projet Tartampion", 0xFFEADAD1);
     List<Project> pTest = null;
 
     @Before
     public void initDb() {
         Context context = ApplicationProvider.getApplicationContext();
-        appDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
+        //Context context = InstrumentationRegistry.getInstrumentation().getContext();
+        appDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).allowMainThreadQueries().build();
         appDatabase.getTypeConverter(Converters.class);
+        //taskDao = mock(TaskDao.class);
+        //projectDao = mock(ProjectDao.class);
         taskDao = appDatabase.taskDao();
         projectDao = appDatabase.projectDao();
-        try {
-            AppDatabase.databaseWriteExecutor.execute(() -> {
-                try {
-                    projectDao.insertProject(p1);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        projectDao.getProjects().observeForever(projects -> {
-            pTest = projects;
-        });
-        Log.e("pTest", pTest.get(0).toString());
     }
 
     @After
@@ -70,22 +67,33 @@ public class TaskDAOUnitTest {
     }
 
     @Test
+    public void testProject() throws InterruptedException{
+        final CountDownLatch latch = new CountDownLatch(1);
+        ArrayList<Project> pList = new ArrayList<>();
+        projectDao.insertProject(p1);
+        LiveData<List<Project>> lvdataP = projectDao.getProjects();
+        Observer<List<Project>> observer = new Observer<List<Project>>() {
+            @Override
+            public void onChanged(List<Project> listLiveData) {
+                Log.e("livedata", listLiveData.toString());
+                pList.addAll(listLiveData);
+            }
+        };
+        lvdataP.observeForever(observer);
+        //Log.e("pTest", pTest.get(0).toString());
+        latch.await(2, TimeUnit.SECONDS);
+        assertEquals(1, pList.size());
+    }
+
+    @Test
     public void insertTask_DAO(){
         Task testTask = new Task(1, pTest.get(0), "Test add", new Date().getTime());
         AppDatabase.databaseWriteExecutor.execute(() -> {
             taskDao.insertTask(testTask);
         });
-        Observer<List<Task>> observer = new Observer<List<Task>>() {
-            @Override
-            public void onChanged(@Nullable List<Task> tasks) {
-                listTask = tasks;
-            }
-        };
-        taskDao.getTasks().observeForever(observer);
         assertNotNull(taskDao.getTasks());
         assertEquals(1, taskDao.getTasks().getValue().size());
         assertEquals("Test add", taskDao.getTasks().getValue().get(0).getName());
-        taskDao.getTasks().removeObserver(observer);
     }
 
     /*@Test
