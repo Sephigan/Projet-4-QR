@@ -71,7 +71,7 @@ public class TaskDAOUnitTest {
     public void testProject() throws InterruptedException{
         projectDao.insertProject(p1);
         LiveData<List<Project>> lvdataP = projectDao.getProjects();
-        lvdataP = projectDao.getProjects().test();
+        lvdataP = projectDao.getProjects();
     }
 
     @Test
