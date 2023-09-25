@@ -23,16 +23,13 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
     public abstract ProjectDao projectDao();
     private static volatile AppDatabase appDatabase;
-    private static final int NUMBER_OF_THREADS = 4;
-    public static final ExecutorService databaseWriteExecutor =
-            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     public static AppDatabase getDatabase(final Context context) {
         if (appDatabase == null) {
             synchronized (AppDatabase.class) {
                 if (appDatabase == null) {
                     appDatabase = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "database").createFromAsset("sampledata/projectDB.json").build();
+                            AppDatabase.class, "database").createFromAsset("sampledata/projectDB.json").allowMainThreadQueries().build();
                 }
             }
         }

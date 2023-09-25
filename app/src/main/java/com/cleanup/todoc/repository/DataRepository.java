@@ -25,7 +25,7 @@ public class DataRepository {
     }
 
     public void insertTask(Task task) {
-        AppDatabase.databaseWriteExecutor.execute(() -> myTaskDao.insertTask(task));
+        myTaskDao.insertTask(task);
     }
 
     public LiveData<List<Task>> getAllTasks() {
@@ -41,7 +41,7 @@ public class DataRepository {
     }
 
     public void deleteTask(Task task){
-        AppDatabase.databaseWriteExecutor.execute(() -> myTaskDao.deleteTask(task));
+        myTaskDao.deleteTask(task);
     }
 
     public LiveData<List<Task>> orderAlphaAZ()

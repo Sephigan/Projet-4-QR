@@ -53,11 +53,8 @@ public class TaskDAOUnitTest {
     @Before
     public void initDb() {
         Context context = ApplicationProvider.getApplicationContext();
-        //Context context = InstrumentationRegistry.getInstrumentation().getContext();
         appDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).allowMainThreadQueries().build();
         appDatabase.getTypeConverter(Converters.class);
-        //taskDao = mock(TaskDao.class);
-        //projectDao = mock(ProjectDao.class);
         taskDao = appDatabase.taskDao();
         projectDao = appDatabase.projectDao();
     }
@@ -70,16 +67,14 @@ public class TaskDAOUnitTest {
     @Test
     public void testProject() throws InterruptedException{
         projectDao.insertProject(p1);
-        LiveData<List<Project>> lvdataP = projectDao.getProjects();
-        lvdataP = projectDao.getProjects();
+        List<Project> lvdataP = projectDao.getProjects().getValue();
+        assertEquals(lvdataP.size(), 1);
     }
 
     @Test
     public void insertTask_DAO(){
         Task testTask = new Task(1, pTest.get(0), "Test add", new Date().getTime());
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            taskDao.insertTask(testTask);
-        });
+        taskDao.insertTask(testTask);
         assertNotNull(taskDao.getTasks());
         assertEquals(1, taskDao.getTasks().getValue().size());
         assertEquals("Test add", taskDao.getTasks().getValue().get(0).getName());
