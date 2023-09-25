@@ -67,8 +67,8 @@ public class TaskDAOUnitTest {
     @Test
     public void testProject() throws InterruptedException{
         projectDao.insertProject(p1);
-        List<Project> lvdataP = projectDao.getProjects().getValue();
-        assertEquals(lvdataP.size(), 1);
+        List<Project> ldataP = projectDao.getProjects().getValue();
+        assertEquals(ldataP.size(), 1);
     }
 
     @Test
