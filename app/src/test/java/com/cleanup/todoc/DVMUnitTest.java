@@ -37,7 +37,7 @@ public class DVMUnitTest {
     @Test
     public void testAddTask() throws InterruptedException {
         doNothing().when(dataRepo).insertTask(any(Task.class));
-        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        Task testTask = new Task(p1, "Test add", new Date().getTime());
         Thread.sleep(100);
         dVM.insertTask(testTask);
         Thread.sleep(100);
@@ -47,7 +47,7 @@ public class DVMUnitTest {
     @Test
     public void supp_Task() throws InterruptedException {
         doNothing().when(dataRepo).deleteTask(any(Task.class));
-        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        Task testTask = new Task(p1, "Test add", new Date().getTime());
         dVM.deleteTask(testTask);
         Thread.sleep(100);
         verify(dataRepo, times(1)).deleteTask(eq(testTask));

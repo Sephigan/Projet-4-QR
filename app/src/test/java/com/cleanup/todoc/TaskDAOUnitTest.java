@@ -73,7 +73,7 @@ public class TaskDAOUnitTest {
 
     @Test
     public void insertTask_DAO(){
-        Task testTask = new Task(1, pTest.get(0), "Test add", new Date().getTime());
+        Task testTask = new Task(pTest.get(0), "Test add", new Date().getTime());
         taskDao.insertTask(testTask);
         assertNotNull(taskDao.getTasks());
         assertEquals(1, taskDao.getTasks().getValue().size());
