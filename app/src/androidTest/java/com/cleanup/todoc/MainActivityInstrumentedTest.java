@@ -30,12 +30,7 @@ import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * @author Gaëtan HERFRAY
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
+
 @RunWith(AndroidJUnit4.class)
 public class MainActivityInstrumentedTest {
 
@@ -47,7 +42,13 @@ public class MainActivityInstrumentedTest {
         MainActivity activity = rule.getActivity();
         TextView lblNoTask = activity.findViewById(R.id.lbl_no_task);
         RecyclerView listTasks = activity.findViewById(R.id.container);
-        final int sizeList = listTasks.getAdapter().getItemCount();
+        int sizeList;
+        if(listTasks.getAdapter()!=null){
+            sizeList = listTasks.getAdapter().getItemCount();
+        }
+        else{
+            sizeList = 0;
+        }
 
         onView(withId(R.id.fab_add_task)).perform(click());
         onView(withId(R.id.txt_task_name)).perform(replaceText("Task example"));
@@ -71,8 +72,13 @@ public class MainActivityInstrumentedTest {
         MainActivity activity = rule.getActivity();
         TextView lblNoTask = activity.findViewById(R.id.lbl_no_task);
         RecyclerView listTasks = activity.findViewById(R.id.container);
-        final int sizeList = listTasks.getAdapter().getItemCount();
-
+        final int sizeList;
+        if(listTasks.getAdapter()!=null){
+            sizeList = listTasks.getAdapter().getItemCount();
+        }
+        else{
+            sizeList = 0;
+        }
         for(int i=0; i<sizeList; i++){
             onView(withId(R.id.container)).perform(RecyclerViewActions.actionOnItemAtPosition(0, new ActionOnDeleteButton()));
         }

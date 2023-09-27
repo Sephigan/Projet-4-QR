@@ -39,7 +39,7 @@ public class RepoUnitTest {
     @Test
     public void insertTask_Repo(){
         doNothing().when(taskDao).insertTask(any(Task.class));
-        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        Task testTask = new Task(p1, "Test add", new Date().getTime());
         dataRepo.insertTask(testTask);
         verify(taskDao, times(1)).insertTask(eq(testTask));
     }
@@ -53,7 +53,7 @@ public class RepoUnitTest {
     @Test
     public void deleteTask_Repo() throws InterruptedException {
         doNothing().when(taskDao).deleteTask(any(Task.class));
-        Task testTask = new Task(1, p1, "Test add", new Date().getTime());
+        Task testTask = new Task(p1, "Test add", new Date().getTime());
         dataRepo.insertTask(testTask);
         Thread.sleep(100);
         dataRepo.deleteTask(testTask);
