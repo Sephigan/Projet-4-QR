@@ -24,4 +24,7 @@ public abstract class ProjectDao {
     @Query("SELECT * from Project ORDER By id Asc")
     public abstract LiveData<List<Project>> getProjects();
 
+    @Query("SELECT * FROM Project WHERE id = :projectId")
+    public abstract Project getProjectById(long projectId);
+
 }

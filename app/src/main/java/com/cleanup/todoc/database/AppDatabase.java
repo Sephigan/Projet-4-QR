@@ -11,23 +11,70 @@ import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.typeconverter.Converters;
 
+<<<<<<< Updated upstream
+=======
+import java.io.File;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+>>>>>>> Stashed changes
 
-@Database(entities = {Task.class, Project.class}, version = 2, exportSchema = false)
+@Database(entities = {Task.class, Project.class}, version = 3, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
     public abstract ProjectDao projectDao();
     private static volatile AppDatabase appDatabase;
 
+<<<<<<< Updated upstream
+=======
+    private static final int NUMBER_OF_THREADS = 4;
+    static final Executor executor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+
+    private static volatile AppDatabase INSTANCE;
+
+>>>>>>> Stashed changes
     public static AppDatabase getDatabase(final Context context) {
-        if (appDatabase == null) {
+        if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
-                if (appDatabase == null) {
-                    appDatabase = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "database").createFromAsset("sampledata/projectDB.json").allowMainThreadQueries().build();
+                if (INSTANCE == null) {
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                                    AppDatabase.class, "database")
+                            .addCallback(roomDatabaseCallback)
+                            .build();
                 }
             }
         }
-        return appDatabase;
+        return INSTANCE;
+    }
+
+    public static void destroyInstance() {
+        INSTANCE = null;
+    }
+
+    private static RoomDatabase.Callback roomDatabaseCallback = new RoomDatabase.Callback() {
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
+
+            Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
+                @Override
+                public void run() {
+                    ProjectDao projectDao = INSTANCE.projectDao();
+
+                    String[] names = {"Projet Tartampion", "Projet Lucidia", "Projet Circus"};
+                    int[] colors = {0xFFEADAD1, 0xFFB4CDBA, 0xFFA3CED2};
+
+                    for (int i = 0; i < names.length; i++) {
+                        Project project = new Project(names[i], colors[i]);
+                        projectDao.insertProject(project);
+                    }
+                }
+            });
+        }
+    };
+
+    public static Executor getExecutor() {
+        return executor;
     }
 }

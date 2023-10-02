@@ -25,7 +25,12 @@ public class DataRepository {
     }
 
     public void insertTask(Task task) {
-        myTaskDao.insertTask(task);
+        AppDatabase.getExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                myTaskDao.insertTask(task);
+            }
+        });
     }
 
     public LiveData<List<Task>> getAllTasks() {
@@ -41,7 +46,12 @@ public class DataRepository {
     }
 
     public void deleteTask(Task task){
-        myTaskDao.deleteTask(task);
+        AppDatabase.getExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                myTaskDao.deleteTask(task);
+            }
+        });
     }
 
     public LiveData<List<Task>> orderAlphaAZ()
