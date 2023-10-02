@@ -64,10 +64,6 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
     private TasksAdapter dataAdapter;
     private List<Task> tmpList;
 
-    Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
-    Project p2 = new Project(2L, "Projet Lucidia", 0xFFB4CDBA);
-    Project p3 = new Project(3L, "Projet Circus", 0xFFA3CED2);
-
     /**
      * @param savedInstanceState If the fragment is being re-created from
      * a previous saved state, this is the state.
@@ -80,9 +76,6 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         factory = new DataViewModelFactory(DI.getDataRepo());
         dataViewModel = new ViewModelProvider(this, factory).get(DataViewModel.class);
         dataViewModel.init();
-        dataViewModel.insertProject(p1);
-        dataViewModel.insertProject(p2);
-        dataViewModel.insertProject(p3);
     }
 
     @Override
