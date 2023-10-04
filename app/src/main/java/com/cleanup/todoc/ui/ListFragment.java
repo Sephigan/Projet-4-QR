@@ -108,6 +108,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         {
             if (tasks != null && !tasks.isEmpty()) {
                 tmpList=tasks;
+                Log.e("tmplist", tmpList.get(0).getName());
                 dataAdapter = new TasksAdapter(tmpList, this);
                 listTasks.setAdapter(dataAdapter);
                 lblNoTasks.setVisibility(View.GONE);
@@ -144,7 +145,6 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
                         taskName,
                         new Date().getTime()
                 );
-                Log.e("task", task.getName()+" "+task.getCreationTimestamp()+" "+task.getId()+" "+task.getProject());
                 dataViewModel.insertTask(task);
                 initList();
                 dialogInterface.dismiss();
