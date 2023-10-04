@@ -17,7 +17,7 @@ import com.cleanup.todoc.repository.DataRepository;
  */
 @Entity(tableName = "Project") // This table name should match what you use in your database
 public class Project {
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey()
     @ColumnInfo(name = "id")
     public long id;
 
@@ -29,7 +29,8 @@ public class Project {
     @ColumnInfo(name = "color")
     private int color;
 
-    public Project(@NonNull String name, @ColorInt int color) {
+    public Project(@NonNull long id, @NonNull String name, @ColorInt int color) {
+        this.id = id;
         this.name = name;
         this.color = color;
     }
@@ -41,9 +42,9 @@ public class Project {
      */
     @NonNull
     public static Project[] getAllProjects() {
-        Project p1 = new Project( "Projet Tartampion", 0xFFEADAD1);
-        Project p2 = new Project("Projet Lucidia", 0xFFB4CDBA);
-        Project p3 = new Project("Projet Circus", 0xFFA3CED2);
+        Project p1 = new Project(1l, "Projet Tartampion", 0xFFEADAD1);
+        Project p2 = new Project(2L, "Projet Lucidia", 0xFFB4CDBA);
+        Project p3 = new Project(3L, "Projet Circus", 0xFFA3CED2);
         return new Project[]{p1,p2,p3};
     }
 
@@ -72,6 +73,9 @@ public class Project {
         return id;
     }
 
+    public void setId(long id){
+        this.id = id;
+    }
     /**
      * Returns the name of the project.
      *

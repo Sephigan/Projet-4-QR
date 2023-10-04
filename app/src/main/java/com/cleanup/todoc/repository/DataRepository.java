@@ -25,11 +25,8 @@ public class DataRepository {
     }
 
     public void insertTask(Task task) {
-        AppDatabase.getExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
-                myTaskDao.insertTask(task);
-            }
+        AppDatabase.getDatabaseWriteExecutor().execute(() -> {
+            myTaskDao.insertTask(task);
         });
     }
 
@@ -38,7 +35,9 @@ public class DataRepository {
     }
 
     public void insertProject(Project project) {
-        myProjectDao.insertProject(project);
+        AppDatabase.getDatabaseWriteExecutor().execute(() -> {
+                myProjectDao.insertProject(project);
+        });
     }
 
     public LiveData<List<Project>> getAllProjects() {
@@ -46,11 +45,8 @@ public class DataRepository {
     }
 
     public void deleteTask(Task task){
-        AppDatabase.getExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
+        AppDatabase.getDatabaseWriteExecutor().execute(() -> {
                 myTaskDao.deleteTask(task);
-            }
         });
     }
 
