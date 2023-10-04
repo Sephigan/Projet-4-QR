@@ -31,6 +31,10 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static volatile AppDatabase INSTANCE;
 
+    public static void setInstance(AppDatabase db) {
+        Converters.setDatabaseInstance(db);
+    }
+
     private static RoomDatabase.Callback roomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
@@ -62,6 +66,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                     AppDatabase.class, "database")
                             .addCallback(roomDatabaseCallback)
                             .build();
+                    AppDatabase.setInstance(INSTANCE);
                 }
             }
         }

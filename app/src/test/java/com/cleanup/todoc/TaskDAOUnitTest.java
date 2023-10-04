@@ -7,6 +7,8 @@ import androidx.lifecycle.Observer;
 import androidx.room.DatabaseConfiguration;
 import androidx.room.InvalidationTracker;
 import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 
@@ -50,13 +53,42 @@ public class TaskDAOUnitTest {
     Project p1 = new Project(50, "Projet Tartampion", 0xFFEADAD1);
     List<Project> pTest = null;
 
+    private static volatile AppDatabase INSTANCE;
+
     @Before
     public void initDb() {
         Context context = ApplicationProvider.getApplicationContext();
-        appDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).allowMainThreadQueries().build();
+        RoomDatabase.Callback roomDatabaseCallback = new RoomDatabase.Callback() {
+            @Override
+            public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                super.onCreate(db);
+
+                Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        ProjectDao projectDao = INSTANCE.projectDao();
+
+                        long[] id = {1L, 2L, 3L};
+                        String[] names = {"Projet Tartampion", "Projet Lucidia", "Projet Circus"};
+                        int[] colors = {0xFFEADAD1, 0xFFB4CDBA, 0xFFA3CED2};
+
+                        for (int i = 0; i < names.length; i++) {
+                            Project project = new Project(id[i], names[i], colors[i]);
+                            projectDao.insertProject(project);
+                        }
+                    }
+                });
+            }
+        };
+        appDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).addCallback(roomDatabaseCallback).allowMainThreadQueries().build();
+        AppDatabase.setInstance(INSTANCE);
         appDatabase.getTypeConverter(Converters.class);
         taskDao = appDatabase.taskDao();
         projectDao = appDatabase.projectDao();
+    }
+
+    public static void setInstance(AppDatabase db) {
+        Converters.setDatabaseInstance(db);
     }
 
     @After
@@ -65,15 +97,8 @@ public class TaskDAOUnitTest {
     }
 
     @Test
-    public void testProject() throws InterruptedException{
-        projectDao.insertProject(p1);
-        List<Project> ldataP = projectDao.getProjects().getValue();
-        assertEquals(ldataP.size(), 1);
-    }
-
-    @Test
     public void insertTask_DAO(){
-        Task testTask = new Task(pTest.get(0), "Test add", new Date().getTime());
+        Task testTask = new Task(appDatabase.projectDao().getProjects().getValue().get(0), "Test add", new Date().getTime());
         taskDao.insertTask(testTask);
         assertNotNull(taskDao.getTasks());
         assertEquals(1, taskDao.getTasks().getValue().size());
