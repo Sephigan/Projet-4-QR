@@ -5,22 +5,28 @@ import static com.cleanup.todoc.model.Project.getAllProjects;
 import androidx.room.ProvidedTypeConverter;
 import androidx.room.TypeConverter;
 
+import com.cleanup.todoc.database.AppDatabase;
 import com.cleanup.todoc.model.Project;
 
 public class Converters {
+    private static AppDatabase database;
+
+    public static void setDatabaseInstance(AppDatabase db) {
+        database = db;
+    }
+
     @TypeConverter
     public static long fromProject(Project project) {
-        if (project==null) {
-            return(0);
+        if (project == null) {
+            return 0;
         }
-        return(project.getId());
+        return project.getId();
     }
 
     @TypeConverter
     public static Project fromId(long id) {
-        for (Project project : getAllProjects()) {
-            if (project.getId() == id)
-                return project;
+        if(database != null) {
+            return database.projectDao().getProjectById(id);
         }
         return null;
     }

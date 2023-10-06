@@ -1,7 +1,5 @@
 package com.cleanup.todoc.ui;
 
-import static java.lang.String.valueOf;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -23,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,16 +28,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cleanup.todoc.DI.DI;
 import com.cleanup.todoc.R;
-import com.cleanup.todoc.database.AppDatabase;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
-import com.cleanup.todoc.repository.DataRepository;
 import com.cleanup.todoc.viewmodel.DataViewModel;
 import com.cleanup.todoc.viewmodel.DataViewModelFactory;
 
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -116,6 +108,7 @@ public class ListFragment extends Fragment implements TasksAdapter.DeleteTaskLis
         {
             if (tasks != null && !tasks.isEmpty()) {
                 tmpList=tasks;
+                Log.e("tmplist", tmpList.get(0).getName());
                 dataAdapter = new TasksAdapter(tmpList, this);
                 listTasks.setAdapter(dataAdapter);
                 lblNoTasks.setVisibility(View.GONE);

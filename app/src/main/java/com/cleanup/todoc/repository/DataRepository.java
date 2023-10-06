@@ -25,7 +25,9 @@ public class DataRepository {
     }
 
     public void insertTask(Task task) {
-        myTaskDao.insertTask(task);
+        AppDatabase.getDatabaseWriteExecutor().execute(() -> {
+            myTaskDao.insertTask(task);
+        });
     }
 
     public LiveData<List<Task>> getAllTasks() {
@@ -33,7 +35,9 @@ public class DataRepository {
     }
 
     public void insertProject(Project project) {
-        myProjectDao.insertProject(project);
+        AppDatabase.getDatabaseWriteExecutor().execute(() -> {
+                myProjectDao.insertProject(project);
+        });
     }
 
     public LiveData<List<Project>> getAllProjects() {
@@ -41,7 +45,9 @@ public class DataRepository {
     }
 
     public void deleteTask(Task task){
-        myTaskDao.deleteTask(task);
+        AppDatabase.getDatabaseWriteExecutor().execute(() -> {
+                myTaskDao.deleteTask(task);
+        });
     }
 
     public LiveData<List<Task>> orderAlphaAZ()

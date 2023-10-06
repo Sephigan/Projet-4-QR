@@ -15,35 +15,21 @@ import com.cleanup.todoc.repository.DataRepository;
  *
  * @author Gaëtan HERFRAY
  */
-@Entity(tableName = "Project")
+@Entity(tableName = "Project") // This table name should match what you use in your database
 public class Project {
-    /**
-     * The unique identifier of the project
-     */
-    @PrimaryKey
-    @NonNull
-    private final long id;
+    @PrimaryKey()
+    @ColumnInfo(name = "id")
+    public long id;
 
-    /**
-     * The name of the project
-     */
     @NonNull
-    private final String name;
+    @ColumnInfo(name = "name")
+    private String name;
 
-    /**
-     * The hex (ARGB) code of the color associated to the project
-     */
     @ColorInt
-    private final int color;
+    @ColumnInfo(name = "color")
+    private int color;
 
-    /**
-     * Instantiates a new Project.
-     *
-     * @param id    the unique identifier of the project to set
-     * @param name  the name of the project to set
-     * @param color the hex (ARGB) code of the color associated to the project to set
-     */
-    public Project(long id, @NonNull String name, @ColorInt int color) {
+    public Project(@NonNull long id, @NonNull String name, @ColorInt int color) {
         this.id = id;
         this.name = name;
         this.color = color;
@@ -56,7 +42,7 @@ public class Project {
      */
     @NonNull
     public static Project[] getAllProjects() {
-        Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
+        Project p1 = new Project(1l, "Projet Tartampion", 0xFFEADAD1);
         Project p2 = new Project(2L, "Projet Lucidia", 0xFFB4CDBA);
         Project p3 = new Project(3L, "Projet Circus", 0xFFA3CED2);
         return new Project[]{p1,p2,p3};
@@ -87,6 +73,9 @@ public class Project {
         return id;
     }
 
+    public void setId(long id){
+        this.id = id;
+    }
     /**
      * Returns the name of the project.
      *

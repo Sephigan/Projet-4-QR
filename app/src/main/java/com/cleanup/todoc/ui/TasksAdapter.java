@@ -10,11 +10,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.cleanup.todoc.DI.DI;
 import com.cleanup.todoc.R;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
+import com.cleanup.todoc.viewmodel.DataViewModel;
+import com.cleanup.todoc.viewmodel.DataViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +40,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.TaskViewHold
      */
     @NonNull
     private final DeleteTaskListener deleteTaskListener;
+
 
     /**
      * Instantiates a new TasksAdapter.

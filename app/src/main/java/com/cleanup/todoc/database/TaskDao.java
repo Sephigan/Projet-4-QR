@@ -9,6 +9,8 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.TypeConverters;
+
+import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.typeconverter.Converters;
 import java.util.List;
@@ -17,7 +19,7 @@ import java.util.List;
 @TypeConverters(Converters.class)
 @Dao
 public abstract class TaskDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertTask(Task task);
 
     @Query("SELECT * from Task ORDER By id Asc")
