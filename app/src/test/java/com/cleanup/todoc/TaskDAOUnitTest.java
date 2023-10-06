@@ -4,9 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import android.content.Context;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -16,22 +13,19 @@ import com.cleanup.todoc.database.TaskDao;
 import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.typeconverter.Converters;
-import com.cleanup.todoc.util.CountingObserver;
 import com.cleanup.todoc.util.LiveDataTestUtil;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowLooper;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 @Config(manifest= Config.NONE)
 @RunWith(RobolectricTestRunner.class)
@@ -69,21 +63,24 @@ public class TaskDAOUnitTest {
         assertEquals("Projet Tartampion", projectDao.getProjectById(1L).getName());
     }
 
+    /*@Test
+    public void insertTask_DAO(){
+        Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
+        projectDao.insertProject(p1);
+        Task testTask = new Task(projectDao.getProjectById(1L), "Test add", new Date().getTime());
+        taskDao.insertTask(testTask);
+        List<Task> test = taskDao.getBrutTasks();
+        assertEquals(1, test.size());
+        assertEquals("Test add", test.get(0).getName());
+    }*/
+
     @Test
     public void insertTask_DAO() throws InterruptedException {
         Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
         projectDao.insertProject(p1);
         Task testTask = new Task(projectDao.getProjectById(1L), "Test add", new Date().getTime());
         taskDao.insertTask(testTask);
-
-        LiveData<List<Task>> liveData = taskDao.getTasks();
-        CountingObserver<List<Task>> observer = new CountingObserver<>();
-        liveData.observeForever(observer);
-
-        List<Task> test = observer.getValue();
-
-        liveData.removeObserver(observer);
-
+        List<Task> test = LiveDataTestUtil.getOrAwaitValue(taskDao.getTasks());
         assertEquals(1, test.size());
         assertEquals("Test add", test.get(0).getName());
     }
