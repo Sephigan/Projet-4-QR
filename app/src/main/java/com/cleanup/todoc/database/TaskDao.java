@@ -19,7 +19,7 @@ import java.util.List;
 @TypeConverters(Converters.class)
 @Dao
 public abstract class TaskDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertTask(Task task);
 
     @Query("SELECT * from Task ORDER By id Asc")

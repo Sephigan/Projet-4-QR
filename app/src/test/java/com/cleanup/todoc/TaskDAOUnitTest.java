@@ -54,7 +54,7 @@ public class TaskDAOUnitTest {
     @Before
     public void initDb() {
         Context context = ApplicationProvider.getApplicationContext();
-        appDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).allowMainThreadQueries().build();
+        appDatabase = Room.inMemoryDatabaseBuilder(context, AppDatabase.class).build();
         AppDatabase.setInstance(appDatabase);
         appDatabase.getTypeConverter(Converters.class);
         taskDao = appDatabase.taskDao();
@@ -83,13 +83,9 @@ public class TaskDAOUnitTest {
         projectDao.insertProject(p1);
         Task testTask = new Task(projectDao.getProjectById(1L), "Test add", new Date().getTime());
         taskDao.insertTask(testTask);
-        final List<Task>[] tmpTask = new List<Task>[];
-        taskDao.getTasks().observeForever(tasks -> {
-            tmpTask[0] = tasks;
-            assertNotNull(tasks);
-            assertEquals(1, tasks.size());
-            assertEquals("Test add", tasks.get(0).getName());
-        });
+        List<Task> test = taskDao.getTasks().getValue();
+        assertEquals(1, test.size());
+        assertEquals("Test add", test.get(0).getName());
     }
 
     @Test
