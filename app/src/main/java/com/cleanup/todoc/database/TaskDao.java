@@ -25,9 +25,6 @@ public abstract class TaskDao {
     @Query("SELECT * from Task ORDER By id Asc")
     public abstract LiveData<List<Task>> getTasks();
 
-    @Query("SELECT * from Task ORDER By id Asc")
-    public abstract List<Task> getBrutTasks();
-
     @Delete(entity = Task.class)
     public abstract void deleteTask(Task task);
 

@@ -2,8 +2,11 @@ package com.cleanup.todoc;
 
 import static org.junit.Assert.assertEquals;
 
+import static java.lang.Thread.sleep;
+
 import android.content.Context;
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.room.Room;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -14,12 +17,12 @@ import com.cleanup.todoc.model.Project;
 import com.cleanup.todoc.model.Task;
 import com.cleanup.todoc.typeconverter.Converters;
 import com.cleanup.todoc.util.LiveDataTestUtil;
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -35,7 +38,7 @@ public class TaskDAOUnitTest {
     private AppDatabase appDatabase;
 
     @Rule
-    public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
+    public TestRule rule = new InstantTaskExecutorRule();
 
     @Before
     public void initDb() {
@@ -63,17 +66,6 @@ public class TaskDAOUnitTest {
         assertEquals("Projet Tartampion", projectDao.getProjectById(1L).getName());
     }
 
-    /*@Test
-    public void insertTask_DAO(){
-        Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
-        projectDao.insertProject(p1);
-        Task testTask = new Task(projectDao.getProjectById(1L), "Test add", new Date().getTime());
-        taskDao.insertTask(testTask);
-        List<Task> test = taskDao.getBrutTasks();
-        assertEquals(1, test.size());
-        assertEquals("Test add", test.get(0).getName());
-    }*/
-
     @Test
     public void insertTask_DAO() throws InterruptedException {
         Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
@@ -86,14 +78,13 @@ public class TaskDAOUnitTest {
     }
 
     @Test
-    public void getTask_DAO(){
+    public void getTask_DAO() throws InterruptedException {
         Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
         projectDao.insertProject(p1);
         Task testTask = new Task(projectDao.getProjectById(1L), "Test add", new Date().getTime());
         taskDao.insertTask(testTask);
-        taskDao.getTasks().observeForever(tasks -> {
-            assertEquals(testTask, tasks.get(0));
-        });
+        List<Task> tasks = LiveDataTestUtil.getOrAwaitValue(taskDao.getTasks());
+        assertEquals(testTask.getName(), tasks.get(0).getName());
     }
 
     @Test
@@ -102,13 +93,11 @@ public class TaskDAOUnitTest {
         projectDao.insertProject(p1);
         Task testTask = new Task(projectDao.getProjectById(1L), "Test add", new Date().getTime());
         taskDao.insertTask(testTask);
-        taskDao.getTasks().observeForever(tasks -> {
-            assertEquals(1, tasks.size());
-        });
-        taskDao.deleteTask(testTask);
-        taskDao.getTasks().observeForever(tasks -> {
-            assertEquals(0, tasks.size());
-        });
+        List<Task> tasks = LiveDataTestUtil.getOrAwaitValue(taskDao.getTasks());
+        assertEquals(1, tasks.size());
+        taskDao.deleteTask(tasks.get(0));
+        tasks = LiveDataTestUtil.getOrAwaitValue(taskDao.getTasks());
+        assertEquals(0, tasks.size());
     }
 
     @Test
@@ -116,24 +105,23 @@ public class TaskDAOUnitTest {
         Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
         projectDao.insertProject(p1);
         Task testTask = new Task(projectDao.getProjectById(1L), "A Test add", new Date().getTime());
+        sleep(100);
         Task testTask2 = new Task(projectDao.getProjectById(1L), "C Test add", new Date().getTime());
+        sleep(100);
         Task testTask3 = new Task(projectDao.getProjectById(1L), "B Test add", new Date().getTime());
         taskDao.insertTask(testTask);
         taskDao.insertTask(testTask2);
         taskDao.insertTask(testTask3);
-        taskDao.getTasks().observeForever(tasks -> {
-            assertEquals(3, tasks.size());
-            assertEquals(testTask, tasks.get(0));
-            assertEquals(testTask2, tasks.get(1));
-            assertEquals(testTask3, tasks.get(2));
-        });
-        taskDao.orderAlphaAZ();
-        taskDao.getTasks().observeForever(tasks -> {
-            assertEquals(3, tasks.size());
-            assertEquals(testTask, tasks.get(0));
-            assertEquals(testTask3, tasks.get(1));
-            assertEquals(testTask2, tasks.get(2));
-        });
+        List<Task> tasks = LiveDataTestUtil.getOrAwaitValue(taskDao.getTasks());
+        assertEquals(3, tasks.size());
+        assertEquals("A Test add", tasks.get(0).getName());
+        assertEquals("C Test add", tasks.get(1).getName());
+        assertEquals("B Test add", tasks.get(2).getName());
+        tasks = LiveDataTestUtil.getOrAwaitValue(taskDao.orderAlphaAZ());
+        assertEquals(3, tasks.size());
+        assertEquals("A Test add", tasks.get(0).getName());
+        assertEquals("B Test add", tasks.get(1).getName());
+        assertEquals("C Test add", tasks.get(2).getName());
     }
 
     @Test
@@ -141,24 +129,23 @@ public class TaskDAOUnitTest {
         Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
         projectDao.insertProject(p1);
         Task testTask = new Task(projectDao.getProjectById(1L), "A Test add", new Date().getTime());
+        sleep(100);
         Task testTask2 = new Task(projectDao.getProjectById(1L), "C Test add", new Date().getTime());
+        sleep(100);
         Task testTask3 = new Task(projectDao.getProjectById(1L), "B Test add", new Date().getTime());
         taskDao.insertTask(testTask);
         taskDao.insertTask(testTask2);
         taskDao.insertTask(testTask3);
-        taskDao.getTasks().observeForever(tasks -> {
-            assertEquals(3, tasks.size());
-            assertEquals(testTask, tasks.get(0));
-            assertEquals(testTask2, tasks.get(1));
-            assertEquals(testTask3, tasks.get(2));
-        });
-        taskDao.orderAlphaZA();
-        taskDao.getTasks().observeForever(tasks -> {
-            assertEquals(3, tasks.size());
-            assertEquals(testTask2, tasks.get(0));
-            assertEquals(testTask3, tasks.get(1));
-            assertEquals(testTask, tasks.get(2));
-        });
+        List<Task> tasks = LiveDataTestUtil.getOrAwaitValue(taskDao.getTasks());
+        assertEquals(3, tasks.size());
+        assertEquals("A Test add", tasks.get(0).getName());
+        assertEquals("C Test add", tasks.get(1).getName());
+        assertEquals("B Test add", tasks.get(2).getName());
+        tasks = LiveDataTestUtil.getOrAwaitValue(taskDao.orderAlphaZA());
+        assertEquals(3, tasks.size());
+        assertEquals("C Test add", tasks.get(0).getName());
+        assertEquals("B Test add", tasks.get(1).getName());
+        assertEquals("A Test add", tasks.get(2).getName());
     }
 
     @Test
@@ -166,25 +153,23 @@ public class TaskDAOUnitTest {
         Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
         projectDao.insertProject(p1);
         Task testTask = new Task(projectDao.getProjectById(1L), "A Test add", new Date().getTime());
+        sleep(100);
         Task testTask2 = new Task(projectDao.getProjectById(1L), "C Test add", new Date().getTime());
+        sleep(100);
         Task testTask3 = new Task(projectDao.getProjectById(1L), "B Test add", new Date().getTime());
         taskDao.insertTask(testTask);
         taskDao.insertTask(testTask2);
         taskDao.insertTask(testTask3);
-        taskDao.getTasks().observeForever(tasks -> {
-            assertEquals(3, tasks.size());
-            assertEquals(testTask, tasks.get(0));
-            assertEquals(testTask2, tasks.get(1));
-            assertEquals(testTask3, tasks.get(2));
-        });
-        taskDao.orderAlphaAZ();
-        taskDao.orderCreationAsc();
-        taskDao.getTasks().observeForever(tasks -> {
-            assertEquals(3, tasks.size());
-            assertEquals(testTask, tasks.get(0));
-            assertEquals(testTask2, tasks.get(1));
-            assertEquals(testTask3, tasks.get(2));
-        });
+        List<Task> tasks = LiveDataTestUtil.getOrAwaitValue(taskDao.getTasks());
+        assertEquals(3, tasks.size());
+        assertEquals("A Test add", tasks.get(0).getName());
+        assertEquals("C Test add", tasks.get(1).getName());
+        assertEquals("B Test add", tasks.get(2).getName());
+        tasks = LiveDataTestUtil.getOrAwaitValue(taskDao.orderCreationAsc());
+        assertEquals(3, tasks.size());
+        assertEquals("A Test add", tasks.get(0).getName());
+        assertEquals("C Test add", tasks.get(1).getName());
+        assertEquals("B Test add", tasks.get(2).getName());
     }
 
     @Test
@@ -192,24 +177,23 @@ public class TaskDAOUnitTest {
         Project p1 = new Project(1L, "Projet Tartampion", 0xFFEADAD1);
         projectDao.insertProject(p1);
         Task testTask = new Task(projectDao.getProjectById(1L), "A Test add", new Date().getTime());
+        sleep(100);
         Task testTask2 = new Task(projectDao.getProjectById(1L), "C Test add", new Date().getTime());
+        sleep(100);
         Task testTask3 = new Task(projectDao.getProjectById(1L), "B Test add", new Date().getTime());
         taskDao.insertTask(testTask);
         taskDao.insertTask(testTask2);
         taskDao.insertTask(testTask3);
-        taskDao.getTasks().observeForever(tasks -> {
-            assertEquals(3, tasks.size());
-            assertEquals(testTask, tasks.get(0));
-            assertEquals(testTask2, tasks.get(1));
-            assertEquals(testTask3, tasks.get(2));
-        });
-        taskDao.orderCreationDesc();
-        taskDao.getTasks().observeForever(tasks -> {
-            assertEquals(3, tasks.size());
-            assertEquals(testTask3, tasks.get(0));
-            assertEquals(testTask2, tasks.get(1));
-            assertEquals(testTask, tasks.get(2));
-        });
+        List<Task> tasks = LiveDataTestUtil.getOrAwaitValue(taskDao.getTasks());
+        assertEquals(3, tasks.size());
+        assertEquals("A Test add", tasks.get(0).getName());
+        assertEquals("C Test add", tasks.get(1).getName());
+        assertEquals("B Test add", tasks.get(2).getName());
+        tasks = LiveDataTestUtil.getOrAwaitValue(taskDao.orderCreationDesc());
+        assertEquals(3, tasks.size());
+        assertEquals("B Test add", tasks.get(0).getName());
+        assertEquals("C Test add", tasks.get(1).getName());
+        assertEquals("A Test add", tasks.get(2).getName());
     }
 }
 
